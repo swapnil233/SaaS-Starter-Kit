@@ -1,40 +1,26 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Boilerplate
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fswapnil233%2Fboilerplate&env=AUTH_SECRET,DATABASE_URL,NEXTAUTH_URL,JWT_SECRET,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET&project-name=saas-boilerplate&repository-name=saas-boilerplate)
 
-## Getting Started
+This is a boilerplate to quickly get SaaS projects up and running, without worrying about the initial setup and things like auth and subscriptions. It was built with [Next.js (pages router)](https://nextjs.org/), [Prisma](https://www.prisma.io/), [Stripe](https://stripe.com/), and [Mantine](https://mantine.dev/). It uses a PostgreSQL database and is deployed on Vercel.
 
-First, run the development server:
+The goal is to simply clone this repo, set up your environment variables, and start building the features of your SaaS project, rather than configuring auth, subscriptions, and other boilerplate for days.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Features:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **A landing page**: With a hero section, features, testimonials, and pricing.
+- **Authentication**: Sign up, sign in, sign out, forgot password, and update user info.
+- **Subscriptions**: Create, update, and cancel subscriptions with Stripe.
+- **User settings**: Update user info, change password, and delete account.
+- **Emails**: Send emails with SendGrid.
+- **SEO**: Meta tags, sitemap, and robots.txt.
+- **Analytics**: Google Analytics.
+- **Logging**: Sentry for error tracking.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Getting Started
+1. Clone the repo: `git clone`
+2. Install dependencies: `npm install`
+3. Set up your environment variables: `.env` (see `.env.example`)
+4. Spin up a local PostgreSQL database: `docker-compose up -d`
+5. Run the migrations: `npx prisma migrate dev`
+6. Start the dev server: `npm run dev`
+7. Visit `http://localhost:3000`
