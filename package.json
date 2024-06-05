@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "migrate:prod": "dotenv -e .env.prod -- npx prisma migrate deploy",
-    "push:prod": "dotenv -e .env.prod -- npx prisma db push"
+    "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
+    "push:prod": "dotenv -e .env.production -- npx prisma db push"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.2.0",
