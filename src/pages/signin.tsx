@@ -2,7 +2,7 @@ import { Stack, useMantineTheme } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
 import { getCsrfToken, getProviders, getSession } from "next-auth/react";
 import { Provider } from "next-auth/providers/index";
-import { AuthenticationForm } from "@/components/auth/AuthenticationForm";
+import { LoginForm } from "@/components/auth/LoginForm";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
@@ -37,7 +37,7 @@ const SignInPage: React.FC<ISignInPage> = ({ providers }) => {
         align="center"
         bg={theme.colors.dark[8]}
       >
-        <AuthenticationForm providers={providers} type="login" />
+        <LoginForm providers={providers} />
       </Stack>
     </>
   );

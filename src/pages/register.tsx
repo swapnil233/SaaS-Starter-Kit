@@ -1,4 +1,4 @@
-import { AuthenticationForm } from "@/components/auth/AuthenticationForm";
+import { RegistrationForm } from "@/components/auth/RegistrationForm";
 import { Stack, useMantineTheme } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
 import { Provider } from "next-auth/providers/index";
@@ -37,7 +37,7 @@ const RegisterPage: React.FC<IRegisterPage> = ({ providers }) => {
         align="center"
         bg={theme.colors.dark[8]}
       >
-        <AuthenticationForm providers={providers} type="register" />
+        <RegistrationForm providers={providers} />
       </Stack>
     </>
   );
