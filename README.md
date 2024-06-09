@@ -1,4 +1,5 @@
 # Boilerplate
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fswapnil233%2Fboilerplate&env=AUTH_SECRET,DATABASE_URL,NEXTAUTH_URL,JWT_SECRET,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET&project-name=saas-boilerplate&repository-name=saas-boilerplate)
 
 This is a boilerplate to quickly get SaaS projects up and running, without worrying about the initial setup and things like auth and subscriptions. It was built with [Next.js (pages router)](https://nextjs.org/), [Prisma](https://www.prisma.io/), [Stripe](https://stripe.com/), and [Mantine](https://mantine.dev/). It uses a PostgreSQL database and is deployed on Vercel.
@@ -17,6 +18,7 @@ The goal is to simply clone this repo, set up your environment variables, and st
 - **Logging**: Sentry for error tracking.
 
 ### Getting Started
+
 1. Clone the repo: `git clone`
 2. Install dependencies: `npm install`
 3. Set up your environment variables: `.env` (see `.env.example`)

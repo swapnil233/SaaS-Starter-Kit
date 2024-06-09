@@ -2,10 +2,7 @@ import { signOut, useSession } from "next-auth/react";
 import { NextPageWithLayout } from "./page";
 import HomePageLayout from "@/components/shared/layouts/HomePageLayout";
 import Link from "next/link";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
-import { PrismaClient } from "@prisma/client";
 import { Box, Button, Stack } from "@mantine/core";
-import prisma from "@/lib/prisma";
 
 const Home: NextPageWithLayout = () => {
   const { data: session, status } = useSession();
