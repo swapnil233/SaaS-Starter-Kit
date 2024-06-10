@@ -1,6 +1,6 @@
 import { Stack, useMantineTheme } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
-import { getCsrfToken, getProviders, getSession } from "next-auth/react";
+import { getProviders, getSession } from "next-auth/react";
 import { Provider } from "next-auth/providers/index";
 import { LoginForm } from "@/components/auth/LoginForm";
 
@@ -14,12 +14,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  return {
-    props: {
-      providers: await getProviders(),
-      csrfToken: await getCsrfToken(context),
-    },
-  };
+  try {
+    const providers = await getProviders();
+
+    return {
+      props: {
+        providers,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: { destination: "/" },
+    };
+  }
 }
 
 interface ISignInPage {

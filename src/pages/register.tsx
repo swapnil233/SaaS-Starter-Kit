@@ -2,7 +2,7 @@ import { RegistrationForm } from "@/components/auth/RegistrationForm";
 import { Stack, useMantineTheme } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
 import { Provider } from "next-auth/providers/index";
-import { getCsrfToken, getProviders, getSession } from "next-auth/react";
+import { getProviders, getSession } from "next-auth/react";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { req } = context;
@@ -14,12 +14,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  return {
-    props: {
-      providers: await getProviders(),
-      csrfToken: await getCsrfToken(context),
-    },
-  };
+  try {
+    const providers = await getProviders();
+
+    return {
+      props: {
+        providers,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: { destination: "/" },
+    };
+  }
 }
 
 interface IRegisterPage {
@@ -28,6 +35,7 @@ interface IRegisterPage {
 
 const RegisterPage: React.FC<IRegisterPage> = ({ providers }) => {
   const theme = useMantineTheme();
+
   return (
     <>
       <Stack
