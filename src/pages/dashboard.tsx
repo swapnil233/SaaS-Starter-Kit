@@ -2,10 +2,9 @@ import { GetServerSidePropsContext } from "next";
 import { User } from "@prisma/client";
 import { auth } from "@/lib/auth/auth";
 import { NextPageWithLayout } from "./page";
-import HomePageLayout from "@/components/shared/layouts/HomePageLayout";
 import { signOut } from "next-auth/react";
 import { getUserById } from "@/services/user.service";
-import { notFound } from "next/navigation";
+import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context.req, context.res);
@@ -49,5 +48,5 @@ const Dashboard: NextPageWithLayout<IDashboardPageProps> = ({ user }) => {
 
 export default Dashboard;
 Dashboard.getLayout = (page) => {
-  return <HomePageLayout>{page}</HomePageLayout>;
+  return <DashboardLayout>{page}</DashboardLayout>;
 };
