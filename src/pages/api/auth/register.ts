@@ -1,6 +1,8 @@
-import { hashPassword } from "@/lib/auth/auth";
+import { hash } from "bcrypt";
 import prisma from "@/lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
+
+const SALT_ROUNDS = 10;
 
 export default async function register(
   req: NextApiRequest,
@@ -25,7 +27,7 @@ export default async function register(
     return res.status(409).json({ message: "User already exists" });
   }
 
-  const hashedPassword = await hashPassword(password);
+  const hashedPassword = await hash(password, SALT_ROUNDS);
 
   const user = await prisma.user.create({
     data: {

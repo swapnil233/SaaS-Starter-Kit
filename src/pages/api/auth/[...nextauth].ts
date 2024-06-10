@@ -1,10 +1,11 @@
-import { verifyPassword } from "@/lib/auth/auth";
+// src/pages/api/auth/[...nextauth].ts
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import type { Adapter } from "next-auth/adapters";
 import prisma from "@/lib/prisma";
+import { compare } from "bcrypt";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET,
@@ -36,7 +37,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No user found with the given email");
         }
 
-        const isValid = await verifyPassword(
+        const isValid = await compare(
           credentials.password,
           user.password || ""
         );
@@ -88,3 +89,5 @@ export const authOptions: NextAuthOptions = {
 };
 
 export default NextAuth(authOptions);
+
+export const config = authOptions;
