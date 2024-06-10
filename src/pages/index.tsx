@@ -19,6 +19,7 @@ const Home: NextPageWithLayout = () => {
           <Button component={Link} href="/register">
             Register
           </Button>
+          <Link href="/dashboard">Dashboard (protected)</Link>
           {session && (
             <Button
               onClick={() => signOut({ callbackUrl: "/", redirect: true })}
