@@ -1,6 +1,7 @@
 import { hash } from "bcrypt";
 import prisma from "@/lib/prisma";
 import { NextApiRequest, NextApiResponse } from "next";
+import { sendWelcomeEmail } from "@/lib/email/sendWelcomeEmail";
 
 const SALT_ROUNDS = 10;
 
@@ -43,6 +44,11 @@ export default async function register(
       },
     },
   });
+
+  if (user.name && user.password) {
+    console.log("New user registered. Sending welcome email...");
+    await sendWelcomeEmail(user.name, user.email);
+  }
 
   return res.status(201).json({ message: "User created", user });
 }

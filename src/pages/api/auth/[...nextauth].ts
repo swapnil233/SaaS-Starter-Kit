@@ -6,6 +6,7 @@ import GoogleProvider from "next-auth/providers/google";
 import type { Adapter } from "next-auth/adapters";
 import prisma from "@/lib/prisma";
 import { compare } from "bcrypt";
+import { sendWelcomeEmail } from "@/lib/email/sendWelcomeEmail";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET,
@@ -59,6 +60,7 @@ export const authOptions: NextAuthOptions = {
 
   pages: {
     signIn: "/signin",
+    // newUser: "/onboarding",
   },
 
   session: {
@@ -84,6 +86,14 @@ export const authOptions: NextAuthOptions = {
         };
       }
       return session;
+    },
+  },
+  // https://next-auth.js.org/configuration/events
+  events: {
+    async createUser({ user }) {
+      if (user.name && user.email) {
+        await sendWelcomeEmail(user.name, user.email);
+      }
     },
   },
 };
