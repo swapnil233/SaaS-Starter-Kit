@@ -1,34 +1,19 @@
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { NextPageWithLayout } from "./page";
 import HomePageLayout from "@/components/shared/layouts/HomePageLayout";
-import Link from "next/link";
-import { Box, Button, Stack } from "@mantine/core";
+import { Box } from "@mantine/core";
+import { Navbar } from "@/components/marketing/navbar/Navbar";
 
 const Home: NextPageWithLayout = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   return (
     <>
+      <Box maw={1400} m="0 auto" py={"lg"} px={"md"}>
+        <Navbar />
+      </Box>
       <h1>Boilerplate</h1>
       <h1>{session?.user.name}</h1>
-      <Box maw={200}>
-        <Stack>
-          <Button component={Link} href="/signin">
-            Sign in
-          </Button>
-          <Button component={Link} href="/register">
-            Register
-          </Button>
-          <Link href="/dashboard">Dashboard (protected)</Link>
-          {session && (
-            <Button
-              onClick={() => signOut({ callbackUrl: "/", redirect: true })}
-            >
-              Sign Out
-            </Button>
-          )}
-        </Stack>
-      </Box>
     </>
   );
 };
