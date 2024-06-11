@@ -11,7 +11,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   if (!session) {
     return {
-      notFound: true,
+      redirect: {
+        destination: `/signin`,
+        permanent: false,
+      },
     };
   }
 
