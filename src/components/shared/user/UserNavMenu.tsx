@@ -1,7 +1,7 @@
-import { Menu, rem } from "@mantine/core";
+import { Menu, MenuDivider, rem } from "@mantine/core";
 import { FC } from "react";
 import UserButton from "./UserButton";
-import { IconLogout, IconSettings } from "@tabler/icons-react";
+import { IconLogout, IconSettings, IconUser } from "@tabler/icons-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
@@ -20,14 +20,13 @@ const UserNavMenu: FC<IUserNavMenu> = ({ name, email, image }) => {
 
       <Menu.Dropdown>
         <Menu.Item
-          leftSection={
-            <IconSettings style={{ width: rem(14), height: rem(14) }} />
-          }
+          leftSection={<IconUser style={{ width: rem(14), height: rem(14) }} />}
           component={Link}
-          href={"/profile/settings"}
+          href={"/profile"}
         >
-          Settings
+          Profile
         </Menu.Item>
+        <MenuDivider />
         <Menu.Item
           onClick={() =>
             signOut({
