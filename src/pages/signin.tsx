@@ -1,16 +1,19 @@
 import { Stack, useMantineTheme } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
-import { getProviders, getSession } from "next-auth/react";
+import { getProviders } from "next-auth/react";
 import { Provider } from "next-auth/providers/index";
 import { LoginForm } from "@/components/auth/LoginForm";
+import { auth } from "@/lib/auth/auth";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const { req } = context;
-  const session = await getSession({ req });
+  const session = await auth(context.req, context.res);
 
   if (session) {
     return {
-      redirect: { destination: "/" },
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
     };
   }
 
