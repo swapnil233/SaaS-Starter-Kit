@@ -2,9 +2,9 @@ import { GetServerSidePropsContext } from "next";
 import { User } from "@prisma/client";
 import { auth } from "@/lib/auth/auth";
 import { NextPageWithLayout } from "./page";
-import { signOut } from "next-auth/react";
 import { getUserById } from "@/services/user.service";
 import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
+import { Stack, Title } from "@mantine/core";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context.req, context.res);
@@ -34,17 +34,9 @@ interface IDashboardPageProps {
 const Dashboard: NextPageWithLayout<IDashboardPageProps> = ({ user }) => {
   return (
     <>
-      <h1>{user.name}</h1>
-      <button
-        onClick={() =>
-          signOut({
-            redirect: true,
-            callbackUrl: "/",
-          })
-        }
-      >
-        Sign out
-      </button>
+      <Stack>
+        <Title order={2}>Hello, {user.name}</Title>
+      </Stack>
     </>
   );
 };

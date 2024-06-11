@@ -1,4 +1,3 @@
-import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { AppShell, Burger, Group, ScrollArea, Skeleton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { FC, ReactNode } from "react";
@@ -41,9 +40,8 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        <AppShell.Section>Navbar header</AppShell.Section>
+        {/* <AppShell.Section>Navbar header</AppShell.Section> */}
         <AppShell.Section grow my="md" component={ScrollArea}>
-          60 links in a scrollable section
           {Array(5)
             .fill(0)
             .map((_, index) => (
