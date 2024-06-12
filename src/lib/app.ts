@@ -2,9 +2,9 @@ import packageInfo from "../../package.json";
 
 const app = {
   version: packageInfo.version,
-  name: packageInfo.name,
-  logoUrl:
-    "https://www.google.ca/images/branding/googlelogo/2x/googlelogo_light_color_272x92dp.png",
+  name: "Boilerplate",
+  logoUrl: "/google-logo.png",
+  logoUrlAlt: "Placeholder logo from Google. Change this with brand logo."
 };
 
 export default app;

@@ -1,7 +1,6 @@
 import {
   Anchor,
   Button,
-  Checkbox,
   Divider,
   Group,
   Paper,
@@ -9,6 +8,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Provider } from "next-auth/providers/index";
@@ -16,9 +16,11 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FC, useState } from "react";
 import { GoogleIcon } from "../icons/GoogleIcon";
-import { IconCircleCheck, IconX } from "@tabler/icons-react";
+import { IconCheck, IconPointFilled } from "@tabler/icons-react";
 import { PasswordValidationServices } from "@/services/auth/PasswordValidationService";
-import { notifications } from "@mantine/notifications";
+import app from "@/lib/app";
+import { registerUser } from "@/services/auth.service";
+import Image from "next/image";
 
 interface IRegistrationFormProps {
   providers: Provider[];
@@ -26,7 +28,6 @@ interface IRegistrationFormProps {
 
 const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
   const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm({
@@ -34,7 +35,6 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
       email: "",
       name: "",
       password: "",
-      terms: false,
     },
 
     validate: {
@@ -51,53 +51,31 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
 
   const handleSubmit = async (values: typeof form.values) => {
     if (loading) return;
-    setLoading(true);
-
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    // Handle registration error
-    if (!response.ok) {
-      console.error(response);
-      alert("Registration failed");
-      notifications.show({
-        title: "Registration failed",
-        message: `We couldn't register your account. Please refresh the page and try again. If the issue persists, try different credentials.`,
-        color: "red",
-      });
-      setLoading(false);
-      return;
-    }
-
-    // Login user
-    const result = await signIn("credentials", {
-      redirect: true,
-      callbackUrl: "/",
-      email: values.email,
-      password: values.password,
-    });
-
-    if (result?.error) {
-      alert("Login failed");
-      setLoading(false);
-    }
-
-    setLoading(false);
-    return;
+    await registerUser(values, setLoading);
   };
 
   return (
-    <Paper radius="md" p="xl" m={"lg"} withBorder w={"90%"} maw={400}>
-      <Text size="lg" fw={500}>
-        Welcome to QualSearch, register with
-      </Text>
-
-      <Group grow mb="md" mt="md">
+    <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
+      <Stack justify="stretch" align="center" gap="xs" mb="md">
+        {app.logoUrl && (
+          <Image
+            src={app.logoUrl}
+            alt={app.logoUrlAlt}
+            height={70}
+            width={70}
+          />
+        )}
+        <Title
+          order={3}
+          style={{
+            textAlign: "center",
+          }}
+        >
+          Let&apos;s get started with {app.name}!
+        </Title>
+        <Text>No credit card details required.</Text>
+      </Stack>
+      <Stack>
         {Object.values(providers).map(
           (provider) =>
             provider.name !== "Credentials" && (
@@ -105,16 +83,22 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
                 key={provider.name}
                 leftSection={provider.name === "Google" ? <GoogleIcon /> : null}
                 variant="default"
-                disabled={provider.name !== "Google"}
                 onClick={() => signIn(provider.id)}
+                fullWidth
+                fw={400}
+                radius={"xs"}
               >
-                {provider.name}
+                Register with {provider.name}
               </Button>
             )
         )}
-      </Group>
+      </Stack>
 
-      <Divider label="Or continue with email" labelPosition="center" my="lg" />
+      <Divider
+        label="Or register with email and password"
+        labelPosition="center"
+        my="lg"
+      />
 
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
@@ -126,7 +110,7 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
             onChange={(event) =>
               form.setFieldValue("name", event.currentTarget.value)
             }
-            radius="md"
+            radius="xs"
           />
 
           <TextInput
@@ -138,7 +122,7 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
               form.setFieldValue("email", event.currentTarget.value)
             }
             error={form.errors.email && "Invalid email"}
-            radius="md"
+            radius="xs"
           />
 
           <PasswordInput
@@ -154,67 +138,38 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
               form.errors.password &&
               "Password should include at least 6 characters"
             }
-            radius="md"
+            radius="xs"
           />
 
-          <PasswordInput
-            required
-            label="Confirm password"
-            placeholder="Confirm your password"
-            value={confirmPassword}
-            onChange={(event) => {
-              setConfirmPassword(event.currentTarget.value);
-            }}
-            radius="md"
-          />
-
-          <Stack gap={"xs"}>
+          <Stack gap={4}>
             {passwordValidation.map((req, index) => (
               <Group key={index} gap="xs">
                 {req.meets ? (
-                  <IconCircleCheck size={16} color="teal" />
+                  <IconCheck size={14} color="teal" />
                 ) : (
-                  <IconX size={16} color="red" />
+                  <IconPointFilled size={14} />
                 )}
-                <Text size="sm">{req.label}</Text>
+                <Text size="xs">{req.label}</Text>
               </Group>
             ))}
-            <Group gap="xs">
-              {confirmPassword === password && confirmPassword !== "" ? (
-                <IconCircleCheck size={16} color="teal" />
-              ) : (
-                <IconX size={16} color="red" />
-              )}
-              <Text size="sm">Passwords match</Text>
-            </Group>
           </Stack>
-
-          <Checkbox
-            mt={"md"}
-            label="I accept terms and conditions"
-            checked={form.values.terms}
-            onChange={(event) =>
-              form.setFieldValue("terms", event.currentTarget.checked)
-            }
-          />
         </Stack>
 
-        <Stack mt={"xl"}>
+        <Stack mt={"xl"} align="stretch">
           <Button
             type="submit"
             loading={loading}
-            disabled={
-              !form.values.terms ||
-              passwordValidation.some((req) => !req.meets) ||
-              loading ||
-              confirmPassword !== password
-            }
+            disabled={passwordValidation.some((req) => !req.meets) || loading}
+            radius="xs"
           >
-            Register
+            {!loading ? "Get started" : "Registering..."}
           </Button>
-          <Anchor component={Link} href="/signin" mt={"md"} size="sm" fw={500}>
-            Already have an account? Login
-          </Anchor>
+          <Group gap={3} align="stretch" justify="center">
+            <Text size="sm">Already have an account?</Text>
+            <Anchor component={Link} href="/signin" size="sm" fw={500}>
+              Sign in
+            </Anchor>
+          </Group>
         </Stack>
       </form>
     </Paper>

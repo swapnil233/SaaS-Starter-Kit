@@ -7,10 +7,9 @@ export class PasswordValidationServices {
   constructor() {
     const passwordRequirements: PasswordRequirement[] = [
       new PasswordRequirement("At least 6 characters", /.{6,}/),
-      new PasswordRequirement("At least one uppercase letter", /[A-Z]/),
-      new PasswordRequirement("At least one lowercase letter", /[a-z]/),
-      new PasswordRequirement("At least one number", /[0-9]/),
-      new PasswordRequirement("At least one special character", /[^A-Za-z0-9]/),
+      new PasswordRequirement("1 or more upper case letters", /[A-Z]/),
+      new PasswordRequirement("1 or more numbers", /[0-9]/),
+      new PasswordRequirement("1 or more special characters", /[^A-Za-z0-9]/),
     ];
 
     this.validator = new PasswordValidator(passwordRequirements);
