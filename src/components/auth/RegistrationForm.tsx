@@ -56,24 +56,28 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
 
   return (
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
-      <Stack justify="stretch" align="center" gap="xs" mb="md">
+      <Stack justify="stretch" gap="xs" mb="md" align="center">
         {app.logoUrl && (
-          <Image
-            src={app.logoUrl}
-            alt={app.logoUrlAlt}
-            height={70}
-            width={70}
-          />
+          <Link href="/">
+            <Image
+              src={app.logoUrl}
+              alt={app.logoUrlAlt}
+              height={60}
+              width={60}
+            />
+          </Link>
         )}
-        <Title
-          order={3}
-          style={{
-            textAlign: "center",
-          }}
-        >
-          Let&apos;s get started with {app.name}!
-        </Title>
-        <Text>No credit card details required.</Text>
+        <Stack align="center" mt={"md"} gap={4}>
+          <Title
+            order={3}
+            style={{
+              textAlign: "center",
+            }}
+          >
+            Let&apos;s get started with {app.name}!
+          </Title>
+          <Text>No credit card details required.</Text>
+        </Stack>
       </Stack>
       <Stack>
         {Object.values(providers).map(

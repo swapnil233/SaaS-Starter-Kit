@@ -17,7 +17,6 @@ import {
   rem,
   useMantineTheme,
 } from "@mantine/core";
-import { GoogleIcon } from "@/components/icons/GoogleIcon";
 import { useDisclosure } from "@mantine/hooks";
 import {
   IconNotification,
@@ -30,6 +29,8 @@ import {
 } from "@tabler/icons-react";
 import classes from "./Navbar.module.css";
 import Link from "next/link";
+import Image from "next/image";
+import app from "@/lib/app";
 
 const mockdata = [
   {
@@ -95,7 +96,14 @@ export function Navbar() {
     <Box pb={20}>
       <header className={classes.header}>
         <Group justify="space-between" h="100%">
-          <GoogleIcon />
+          <Link href="/">
+            <Image
+              src={app.logoUrl}
+              alt={app.logoUrlAlt}
+              height={40}
+              width={40}
+            />
+          </Link>
 
           <Group h="100%" gap={0} visibleFrom="sm">
             <a href="#" className={classes.link}>
