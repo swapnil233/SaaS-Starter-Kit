@@ -12,7 +12,7 @@ The goal is to simply clone this repo, set up your environment variables, and st
 - **Authentication**: Sign up, sign in, sign out, forgot password, and update user info.
 - **Subscriptions**: Create, update, and cancel subscriptions with Stripe.
 - **User settings**: Update user info, change password, and delete account.
-- **Emails**: Send emails with SendGrid.
+- **Emails**: Send emails with nodemailer and react-email.
 - **SEO**: Meta tags, sitemap, and robots.txt.
 - **Analytics**: Google Analytics.
 - **Logging**: Sentry for error tracking.
