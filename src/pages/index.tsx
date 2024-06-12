@@ -1,19 +1,18 @@
-import { useSession } from "next-auth/react";
 import { NextPageWithLayout } from "./page";
 import HomePageLayout from "@/components/shared/layouts/HomePageLayout";
 import { Box } from "@mantine/core";
 import { Navbar } from "@/components/marketing/navbar/Navbar";
+import { Hero } from "@/components/marketing/hero/Hero";
+import { FeaturesGrid } from "@/components/marketing/features/FeaturesGrid";
 
 const Home: NextPageWithLayout = () => {
-  const { data: session } = useSession();
-
   return (
     <>
-      <Box maw={1400} m="0 auto" py={"lg"} px={"md"}>
+      <Box maw={1400} m="0 auto" pt={"lg"} px={"md"}>
         <Navbar />
       </Box>
-      <h1>Boilerplate</h1>
-      <h1>{session?.user.name}</h1>
+      <Hero />
+      <FeaturesGrid />
     </>
   );
 };
