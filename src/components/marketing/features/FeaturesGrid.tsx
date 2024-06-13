@@ -6,47 +6,8 @@ import {
   SimpleGrid,
   rem,
 } from "@mantine/core";
-import {
-  IconGauge,
-  IconCookie,
-  IconUser,
-  IconMessage2,
-  IconLock,
-} from "@tabler/icons-react";
 import classes from "./FeaturesGrid.module.css";
-
-export const MOCKDATA = [
-  {
-    icon: IconGauge,
-    title: "Extreme performance",
-    description:
-      "This dust is actually a powerful poison that will even make a pro wrestler sick, Regice cloaks itself with frigid air of -328 degrees Fahrenheit",
-  },
-  {
-    icon: IconUser,
-    title: "Privacy focused",
-    description:
-      "People say it can run at the same speed as lightning striking, Its icy body is so cold, it will not melt even if it is immersed in magma",
-  },
-  {
-    icon: IconCookie,
-    title: "No third parties",
-    description:
-      "They’re popular, but they’re rare. Trainers who show them off recklessly may be targeted by thieves",
-  },
-  {
-    icon: IconLock,
-    title: "Secure by default",
-    description:
-      "Although it still can’t fly, its jumping power is outstanding, in Alola the mushrooms on Paras don’t grow up quite right",
-  },
-  {
-    icon: IconMessage2,
-    title: "24/7 Support",
-    description:
-      "Rapidash usually can be seen casually cantering in the fields and plains, Skitty is known to chase around after its own tail",
-  },
-];
+import { featuresList } from "@/lib/marketing/featuresList";
 
 interface FeatureProps {
   icon: React.FC<any>;
@@ -71,20 +32,21 @@ export function Feature({ icon: Icon, title, description }: FeatureProps) {
 }
 
 export function FeaturesGrid() {
-  const features = MOCKDATA.map((feature, index) => (
+  const features = featuresList.map((feature, index) => (
     <Feature {...feature} key={index} />
   ));
 
   return (
     <Container className={classes.wrapper}>
       <Title className={classes.title}>
-        Integrate effortlessly with any technology stack
+        Focus on building your app, not implementing auth.
       </Title>
 
       <Container size={560} p={0}>
         <Text size="sm" className={classes.description}>
-          Every once in a while, you’ll see a Golbat that’s missing some fangs.
-          This happens when hunger drives it to try biting a Steel-type Pokémon.
+          This starter kit takes care of all the annoying tasks, like setting up
+          authentication, setting up Stripe, etc., so you can just focus on
+          building the next big thing.
         </Text>
       </Container>
 

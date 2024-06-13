@@ -12,7 +12,9 @@ const Home: NextPageWithLayout = () => {
         <Navbar />
       </Box>
       <Hero />
-      <FeaturesGrid />
+      <div id="features">
+        <FeaturesGrid />
+      </div>
     </>
   );
 };
