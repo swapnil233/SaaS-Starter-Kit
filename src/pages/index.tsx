@@ -4,6 +4,7 @@ import { Box } from "@mantine/core";
 import { Navbar } from "@/components/marketing/navbar/Navbar";
 import { Hero } from "@/components/marketing/hero/Hero";
 import { FeaturesGrid } from "@/components/marketing/features/FeaturesGrid";
+import { Footer } from "@/components/marketing/footer/Footer";
 
 const Home: NextPageWithLayout = () => {
   return (
@@ -15,6 +16,7 @@ const Home: NextPageWithLayout = () => {
       <div id="features">
         <FeaturesGrid />
       </div>
+      <Footer />
     </>
   );
 };
