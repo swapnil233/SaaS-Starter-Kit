@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Provider } from "next-auth/providers/index";
@@ -15,6 +16,8 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FC, useState } from "react";
 import { GoogleIcon } from "../icons/GoogleIcon";
+import Image from "next/image";
+import app from "@/lib/app";
 
 interface ILoginFormProps {
   providers: Provider[];
@@ -59,12 +62,31 @@ const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
   };
 
   return (
-    <Paper radius="md" p="xl" m={"lg"} withBorder w={"90%"} maw={400}>
-      <Text size="lg" fw={500}>
-        Welcome to QualSearch, login with
-      </Text>
-
-      <Group grow mb="md" mt="md">
+    <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
+      <Stack justify="stretch" gap="xs" mb="md" align="center">
+        {app.logoUrl && (
+          <Link href="/">
+            <Image
+              src={app.logoUrl}
+              alt={app.logoUrlAlt}
+              height={60}
+              width={60}
+            />
+          </Link>
+        )}
+        <Stack align="center" mt={"md"} gap={4}>
+          <Title
+            order={3}
+            style={{
+              textAlign: "center",
+            }}
+          >
+            Welcome back to {app.name}!
+          </Title>
+          <Text>Please login to continue.</Text>
+        </Stack>
+      </Stack>
+      <Stack>
         {Object.values(providers).map(
           (provider) =>
             provider.name !== "Credentials" && (
@@ -72,16 +94,22 @@ const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
                 key={provider.name}
                 leftSection={provider.name === "Google" ? <GoogleIcon /> : null}
                 variant="default"
-                disabled={provider.name !== "Google"}
                 onClick={() => signIn(provider.id)}
+                fullWidth
+                fw={400}
+                radius={"xs"}
               >
-                {provider.name}
+                Login with {provider.name}
               </Button>
             )
         )}
-      </Group>
+      </Stack>
 
-      <Divider label="Or continue with email" labelPosition="center" my="lg" />
+      <Divider
+        label="Or login with email and password"
+        labelPosition="center"
+        my="lg"
+      />
 
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
@@ -94,7 +122,7 @@ const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
               form.setFieldValue("email", event.currentTarget.value)
             }
             error={form.errors.email && "Invalid email"}
-            radius="md"
+            radius="xs"
           />
 
           <PasswordInput
@@ -109,23 +137,20 @@ const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
               form.errors.password &&
               "Password should include at least 6 characters"
             }
-            radius="md"
+            radius="xs"
           />
         </Stack>
 
-        <Stack mt={"xl"}>
-          <Button type="submit" loading={loading}>
-            Login
+        <Stack mt={"xl"} align="stretch">
+          <Button type="submit" loading={loading} radius="xs">
+            {!loading ? "Login" : "Logging in..."}
           </Button>
-          <Anchor
-            component={Link}
-            href="/register"
-            mt={"md"}
-            size="sm"
-            fw={500}
-          >
-            Don&apos;t have an account? Register
-          </Anchor>
+          <Group gap={3} align="stretch" justify="center">
+            <Text size="sm">Don&apos;t have an account?</Text>
+            <Anchor component={Link} href="/register" size="sm" fw={500}>
+              Register
+            </Anchor>
+          </Group>
         </Stack>
       </form>
     </Paper>

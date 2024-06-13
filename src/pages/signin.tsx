@@ -1,4 +1,4 @@
-import { Stack, useMantineTheme } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
 import { getProviders } from "next-auth/react";
 import { Provider } from "next-auth/providers/index";
@@ -39,17 +39,10 @@ interface ISignInPage {
 }
 
 const SignInPage: React.FC<ISignInPage> = ({ providers }) => {
-  const theme = useMantineTheme();
   return (
     <>
       <SharedHead title="Sign in" description={`Sign into ${app.name}`} />
-      <Stack
-        w={"100%"}
-        h={"100vh"}
-        justify="center"
-        align="center"
-        bg={theme.colors.dark[8]}
-      >
+      <Stack justify="center" align="center">
         <LoginForm providers={providers} />
       </Stack>
     </>
