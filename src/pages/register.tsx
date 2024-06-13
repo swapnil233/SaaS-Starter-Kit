@@ -1,8 +1,8 @@
 import { RegistrationForm } from "@/components/auth/RegistrationForm";
+import QuotesCard from "@/components/cards/quotes/QuotesCard";
 import SharedHead from "@/components/shared/SharedHead";
 import app from "@/lib/app";
 import { auth } from "@/lib/auth/auth";
-import { Stack } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
 import { Provider } from "next-auth/providers/index";
 import { getProviders } from "next-auth/react";
@@ -45,9 +45,17 @@ const RegisterPage: React.FC<IRegisterPage> = ({ providers }) => {
         title="Register"
         description={`Register an account for ${app.name}`}
       />
-      <Stack justify="center" align="center">
-        <RegistrationForm providers={providers} />
-      </Stack>
+      <div className="flex h-screen">
+        <div
+          className="hidden md:flex md:justify-center md:content-center md:items-center w-[46%] bg-cover bg-center"
+          style={{ backgroundImage: "url('/register-half.jpeg')" }}
+        >
+          <QuotesCard />
+        </div>
+        <div className="w-full md:w-[54%] flex items-center justify-center">
+          <RegistrationForm providers={providers} />
+        </div>
+      </div>
     </>
   );
 };
