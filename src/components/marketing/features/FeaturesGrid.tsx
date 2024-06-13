@@ -39,7 +39,16 @@ export function FeaturesGrid() {
   return (
     <Container className={classes.wrapper}>
       <Title className={classes.title}>
-        Focus on building your app, not implementing auth.
+        Focus on{" "}
+        <Text
+          component="span"
+          inherit
+          variant="gradient"
+          gradient={{ from: "pink", to: "yellow" }}
+        >
+          building
+        </Text>{" "}
+        your app, not implementing auth.
       </Title>
 
       <Container size={560} p={0}>
