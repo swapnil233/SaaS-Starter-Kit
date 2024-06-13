@@ -45,7 +45,7 @@ const RegisterPage: React.FC<IRegisterPage> = ({ providers }) => {
         title="Register"
         description={`Register an account for ${app.name}`}
       />
-      <div className="flex h-screen">
+      <div className="flex md:h-screen">
         <div
           className="hidden md:flex md:justify-center md:content-center md:items-center w-[46%] bg-cover bg-center"
           style={{ backgroundImage: "url('/register-half.jpeg')" }}
