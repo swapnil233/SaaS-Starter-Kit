@@ -113,10 +113,17 @@ export function Navbar() {
                         Get started
                       </Text>
                       <Text size="xs" c="dimmed">
-                        Their food sources have decreased, and their numbers
+                        Start by creating an account. No credit card details
+                        required.
                       </Text>
                     </div>
-                    <Button variant="default">Get started</Button>
+                    <Button
+                      component={Link}
+                      href={"/register"}
+                      variant="default"
+                    >
+                      Get started
+                    </Button>
                   </Group>
                 </div>
               </HoverCard.Dropdown>
