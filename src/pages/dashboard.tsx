@@ -5,6 +5,7 @@ import { NextPageWithLayout } from "./page";
 import { getUserById } from "@/services/user.service";
 import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
 import { Stack, Title } from "@mantine/core";
+import SharedHead from "@/components/shared/SharedHead";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context.req, context.res);
@@ -34,6 +35,7 @@ interface IDashboardPageProps {
 const Dashboard: NextPageWithLayout<IDashboardPageProps> = ({ user }) => {
   return (
     <>
+      <SharedHead title="Dashboard" />
       <Stack>
         <Title order={2}>Hello, {user.name}</Title>
       </Stack>

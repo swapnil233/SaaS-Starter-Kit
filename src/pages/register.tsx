@@ -1,4 +1,6 @@
 import { RegistrationForm } from "@/components/auth/RegistrationForm";
+import SharedHead from "@/components/shared/SharedHead";
+import app from "@/lib/app";
 import { auth } from "@/lib/auth/auth";
 import { Stack } from "@mantine/core";
 import { GetServerSidePropsContext } from "next";
@@ -39,6 +41,10 @@ interface IRegisterPage {
 const RegisterPage: React.FC<IRegisterPage> = ({ providers }) => {
   return (
     <>
+      <SharedHead
+        title="Register"
+        description={`Register an account for ${app.name}`}
+      />
       <Stack justify="center" align="center">
         <RegistrationForm providers={providers} />
       </Stack>

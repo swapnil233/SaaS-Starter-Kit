@@ -1,4 +1,5 @@
 import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
+import SharedHead from "@/components/shared/SharedHead";
 import { auth } from "@/lib/auth/auth";
 import { NextPageWithLayout } from "@/pages/page";
 import { getUserById } from "@/services/user.service";
@@ -39,13 +40,16 @@ interface IProfilePageProps {
 
 const Profile: NextPageWithLayout<IProfilePageProps> = ({ user }) => {
   return (
-    <Stack gap={"lg"}>
-      <Title order={2}>Profile</Title>
-      <Stack gap={"md"}>
-        {user.name}
-        {user.email}
+    <>
+      <SharedHead title="Profile" />
+      <Stack gap={"lg"}>
+        <Title order={2}>Profile</Title>
+        <Stack gap={"md"}>
+          {user.name}
+          {user.email}
+        </Stack>
       </Stack>
-    </Stack>
+    </>
   );
 };
 
