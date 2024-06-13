@@ -4,7 +4,6 @@ import {
   Divider,
   Group,
   Paper,
-  PasswordInput,
   Stack,
   Text,
   TextInput,
@@ -15,19 +14,18 @@ import { Provider } from "next-auth/providers/index";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FC, useState } from "react";
-import { GoogleIcon } from "../icons/GoogleIcon";
-import { IconCheck, IconPointFilled } from "@tabler/icons-react";
-import { PasswordValidationServices } from "@/services/auth/PasswordValidationService";
-import app from "@/lib/app";
 import { registerUser } from "@/services/auth.service";
 import Image from "next/image";
+import app from "@/lib/app";
+import { GoogleIcon } from "../icons/GoogleIcon";
+import { PasswordStrength } from "./PasswordStrength";
+import isPasswordValid from "@/lib/auth/isPasswordValid";
 
 interface IRegistrationFormProps {
   providers: Provider[];
 }
 
 const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
-  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm({
@@ -39,15 +37,8 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
-      password: (val) =>
-        val.length <= 6
-          ? "Password should include at least 6 characters"
-          : null,
     },
   });
-
-  const passwordService = new PasswordValidationServices();
-  const passwordValidation = passwordService.validate(password);
 
   const handleSubmit = async (values: typeof form.values) => {
     if (loading) return;
@@ -129,42 +120,18 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
             radius="xs"
           />
 
-          <PasswordInput
-            required
-            label="Password"
-            placeholder="Your password"
+          <PasswordStrength
             value={form.values.password}
-            onChange={(event) => {
-              form.setFieldValue("password", event.currentTarget.value);
-              setPassword(event.currentTarget.value);
-            }}
-            error={
-              form.errors.password &&
-              "Password should include at least 6 characters"
-            }
-            radius="xs"
+            onChange={(value: string) => form.setFieldValue("password", value)}
           />
-
-          <Stack gap={4}>
-            {passwordValidation.map((req, index) => (
-              <Group key={index} gap="xs">
-                {req.meets ? (
-                  <IconCheck size={14} color="teal" />
-                ) : (
-                  <IconPointFilled size={14} />
-                )}
-                <Text size="xs">{req.label}</Text>
-              </Group>
-            ))}
-          </Stack>
         </Stack>
 
         <Stack mt={"xl"} align="stretch">
           <Button
             type="submit"
             loading={loading}
-            disabled={passwordValidation.some((req) => !req.meets) || loading}
             radius="xs"
+            disabled={!isPasswordValid(form.values.password)}
           >
             {!loading ? "Get started" : "Registering..."}
           </Button>
