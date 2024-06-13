@@ -1,10 +1,10 @@
 // This component has been modified from
 // https://github.com/mantinedev/ui.mantine.dev/blob/master/lib/PasswordStrength/PasswordStrength.tsx
 
+import { Group, PasswordInput, Progress } from "@mantine/core";
 import getPasswordStrength from "@/lib/auth/getPasswordStrength";
-import { requirements } from "@/lib/auth/passwordRequirements";
-import { Progress, PasswordInput, Group } from "@mantine/core";
 import PasswordRequirement from "./PasswordRequirement";
+import requirements from "@/lib/auth/passwordRequirements";
 
 interface PasswordStrengthProps {
   value: string;

@@ -1,4 +1,4 @@
-import { requirements } from "./passwordRequirements";
+import requirements from "./passwordRequirements";
 
 export default function isPasswordValid(password: string) {
   if (password.length <= 5) return false;

@@ -1,4 +1,4 @@
-import { requirements } from "./passwordRequirements";
+import requirements from "./passwordRequirements";
 
 export default function getPasswordStrength(password: string) {
   let multiplier = password.length > 5 ? 0 : 1;
