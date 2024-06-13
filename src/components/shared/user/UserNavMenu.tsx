@@ -1,7 +1,7 @@
 import { Menu, MenuDivider, rem } from "@mantine/core";
 import { FC } from "react";
 import UserButton from "./UserButton";
-import { IconLogout, IconSettings, IconUser } from "@tabler/icons-react";
+import { IconLogout, IconUser } from "@tabler/icons-react";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
