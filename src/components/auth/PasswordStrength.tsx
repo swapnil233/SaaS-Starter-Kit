@@ -4,7 +4,7 @@
 import { Group, PasswordInput, Progress } from "@mantine/core";
 import getPasswordStrength from "@/lib/auth/getPasswordStrength";
 import PasswordRequirement from "./PasswordRequirement";
-import requirements from "@/lib/auth/passwordRequirements";
+import passwordRequirements from "@/lib/auth/passwordRequirements";
 
 interface PasswordStrengthProps {
   value: string;
@@ -13,7 +13,7 @@ interface PasswordStrengthProps {
 
 export function PasswordStrength({ value, onChange }: PasswordStrengthProps) {
   const strength = getPasswordStrength(value);
-  const checks = requirements.map((requirement, index) => (
+  const checks = passwordRequirements.map((requirement, index) => (
     <PasswordRequirement
       key={index}
       label={requirement.label}
