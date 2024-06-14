@@ -6,6 +6,7 @@ import { Hero } from "@/components/marketing/hero/Hero";
 import { FeaturesGrid } from "@/components/marketing/features/FeaturesGrid";
 import { Footer } from "@/components/marketing/footer/Footer";
 import SharedHead from "@/components/shared/SharedHead";
+import PricingSection from "@/components/marketing/pricing/PricingSection";
 
 const Home: NextPageWithLayout = () => {
   return (
@@ -18,6 +19,7 @@ const Home: NextPageWithLayout = () => {
       <div id="features">
         <FeaturesGrid />
       </div>
+      <PricingSection />
       <Footer />
     </>
   );
