@@ -17,6 +17,12 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  // Used in the Stripe webhook to identify the user in Stripe and later create Customer Portal or prefill user credit card details
+  customerId    String?
+  // Used in the Stripe webhook. Should match pricing array in lib/pricing.ts
+  priceId       String?
+  // Used to determine if the user has access to premium features. Turned on/off by Stripe webhooks.
+  hasAccess     Boolean         @default(false)
   // Optional for WebAuthn support
   Authenticator Authenticator[]
 
