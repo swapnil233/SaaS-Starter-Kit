@@ -1,25 +1,26 @@
+import { FC } from "react";
+import { useSession } from "next-auth/react";
 import { Badge, Button, Group } from "@mantine/core";
+import Link from "next/link";
+import { PricingPlan } from "@/lib/stripe/pricing";
 import { IconCheck } from "@tabler/icons-react";
+import { getSubscriptionLink } from "@/lib/stripe/getSubscriptionLink";
 
-interface PricingCardProps {
-  title: string;
-  description: string;
-  price?: number;
-  oneTimePurchase?: boolean;
-  features: string[];
-  isPopular?: boolean;
-  isYearly: boolean;
+interface PricingCardProps extends PricingPlan {
+  billingCycle: "monthly" | "yearly" | "oneTime" | "free";
 }
 
-const PricingCard: React.FC<PricingCardProps> = ({
+const PricingCard: FC<PricingCardProps> = ({
   title,
   description,
   price,
-  oneTimePurchase = false,
   features,
   isPopular = false,
-  isYearly = false,
+  billingCycle,
+  purchaseLink,
 }) => {
+  const session = useSession();
+
   return (
     <div className="bg-white p-6 rounded-md shadow-sm flex flex-col">
       <Group justify="space-between">
@@ -32,11 +33,11 @@ const PricingCard: React.FC<PricingCardProps> = ({
       </Group>
       <p className="mt-4 text-gray-600">{description}</p>
       <div className="mt-6 text-4xl font-extrabold text-gray-900">
-        {price !== undefined ? (
+        {price > 0 ? (
           <>
             ${price.toLocaleString()}
-            <span className="text-sm text-neutral-500 ">
-              /{oneTimePurchase ? "one-time" : isYearly ? "year" : "month"}
+            <span className="text-sm text-neutral-500">
+              /{billingCycle === "oneTime" ? "one-time" : billingCycle}
             </span>
           </>
         ) : (
@@ -56,6 +57,9 @@ const PricingCard: React.FC<PricingCardProps> = ({
         mt={24}
         fullWidth
         radius="xs"
+        component={Link}
+        target="_blank"
+        href={getSubscriptionLink(session, purchaseLink)}
       >
         Get started
       </Button>
