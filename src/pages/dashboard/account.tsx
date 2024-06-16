@@ -3,7 +3,7 @@ import SharedHead from "@/components/shared/SharedHead";
 import { auth } from "@/lib/auth/auth";
 import { NextPageWithLayout } from "@/pages/page";
 import { getUserById } from "@/services/user.service";
-import { Stack, Title } from "@mantine/core";
+import { Stack, Text, Title } from "@mantine/core";
 import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 
@@ -34,26 +34,26 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-interface IProfilePageProps {
+interface IAccountPageProps {
   user: User;
 }
 
-const Profile: NextPageWithLayout<IProfilePageProps> = ({ user }) => {
+const Account: NextPageWithLayout<IAccountPageProps> = ({ user }) => {
   return (
     <>
-      <SharedHead title="Profile" />
+      <SharedHead title="Account" />
       <Stack gap={"lg"}>
-        <Title order={2}>Profile</Title>
+        <Title order={2}>Account</Title>
         <Stack gap={"md"}>
-          {user.name}
-          {user.email}
+          <Text>{user.name}</Text>
+          <Text>{user.email}</Text>
         </Stack>
       </Stack>
     </>
   );
 };
 
-export default Profile;
-Profile.getLayout = (page) => {
+export default Account;
+Account.getLayout = (page) => {
   return <DashboardLayout>{page}</DashboardLayout>;
 };

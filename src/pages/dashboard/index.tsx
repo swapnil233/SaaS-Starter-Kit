@@ -1,7 +1,7 @@
 import { GetServerSidePropsContext } from "next";
 import { User } from "@prisma/client";
 import { auth } from "@/lib/auth/auth";
-import { NextPageWithLayout } from "./page";
+import { NextPageWithLayout } from "../page";
 import { getUserById } from "@/services/user.service";
 import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
 import { Stack, Title } from "@mantine/core";
@@ -19,13 +19,23 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  const user = await getUserById(session.user.id);
+  try {
+    const user = await getUserById(session.user.id);
 
-  return {
-    props: {
-      user: JSON.parse(JSON.stringify(user)),
-    },
-  };
+    return {
+      props: {
+        user: JSON.parse(JSON.stringify(user)),
+      },
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      redirect: {
+        destination: `/signin`,
+        permanent: false,
+      },
+    };
+  }
 }
 
 interface IDashboardPageProps {
