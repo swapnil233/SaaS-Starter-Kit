@@ -5,8 +5,8 @@ import {
   Container,
   SimpleGrid,
   rem,
+  Stack,
 } from "@mantine/core";
-import classes from "./FeaturesGrid.module.css";
 import { featuresList } from "@/lib/marketing/featuresList";
 
 interface FeatureProps {
@@ -37,8 +37,8 @@ export function FeaturesGrid() {
   ));
 
   return (
-    <Container className={classes.wrapper}>
-      <Title className={classes.title}>
+    <Container py={64}>
+      <Title fw={900} mb="md" ta="center">
         Focus on{" "}
         <Text
           component="span"
@@ -51,13 +51,13 @@ export function FeaturesGrid() {
         your app, not implementing auth.
       </Title>
 
-      <Container size={560} p={0}>
-        <Text size="sm" className={classes.description}>
+      <Stack align="center">
+        <p className="text-base md:text-lg text-gray-600 max-w-[48rem] text-center">
           This starter kit takes care of all the annoying tasks, like setting up
           authentication, setting up Stripe, etc., so you can just focus on
           building the next big thing.
-        </Text>
-      </Container>
+        </p>
+      </Stack>
 
       <SimpleGrid
         mt={60}
