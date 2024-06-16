@@ -6,25 +6,23 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 
 interface IUserNavMenu {
-  name: string;
-  email: string;
   image: string;
 }
 
-const UserNavMenu: FC<IUserNavMenu> = ({ name, email, image }) => {
+const UserNavMenu: FC<IUserNavMenu> = ({ image }) => {
   return (
-    <Menu position="right-end" withArrow>
+    <Menu withArrow>
       <Menu.Target>
-        <UserButton image={image} name={name} email={email} />
+        <UserButton image={image} />
       </Menu.Target>
 
       <Menu.Dropdown>
         <Menu.Item
           leftSection={<IconUser style={{ width: rem(14), height: rem(14) }} />}
           component={Link}
-          href={"/profile"}
+          href={"/dashboard/account"}
         >
-          Profile
+          Account
         </Menu.Item>
         <MenuDivider />
         <Menu.Item
