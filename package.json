@@ -13,7 +13,8 @@
     "prepack": "husky install",
     "postinstall": "prisma generate",
     "prepare": "husky",
-    "emails": "email dev --dir ./src/components/emails --port 3001"
+    "emails": "email dev --dir ./src/components/emails --port 3001",
+    "stripe:watch": "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.2.0",
@@ -26,16 +27,17 @@
     "@prisma/client": "^5.15.0",
     "@react-email/components": "0.0.19",
     "@react-email/render": "^0.0.15",
-    "@tabler/icons": "^3.5.0",
     "@tabler/icons-react": "^3.5.0",
     "bcrypt": "^5.1.1",
     "dotenv-cli": "^7.4.2",
+    "micro": "^10.0.1",
     "next": "14.2.3",
     "next-auth": "^4.24.7",
     "nodemailer": "^6.9.13",
     "react": "^18",
     "react-dom": "^18",
-    "react-email": "2.1.4"
+    "react-email": "2.1.4",
+    "stripe": "^15.11.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
