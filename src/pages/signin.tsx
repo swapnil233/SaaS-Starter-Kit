@@ -13,7 +13,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   if (session) {
     return {
       redirect: {
-        destination: "/dashboard",
+        destination: context.query.callbackUrl || "/dashboard",
         permanent: false,
       },
     };
@@ -25,6 +25,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         providers,
+        callbackUrl: context.query.callbackUrl || "/",
       },
     };
   } catch (error) {
@@ -36,14 +37,15 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 interface ISignInPage {
   providers: Provider[];
+  callbackUrl: string;
 }
 
-const SignInPage: React.FC<ISignInPage> = ({ providers }) => {
+const SignInPage: React.FC<ISignInPage> = ({ providers, callbackUrl }) => {
   return (
     <>
       <SharedHead title="Sign in" description={`Sign into ${app.name}`} />
       <Stack justify="center" align="center">
-        <LoginForm providers={providers} />
+        <LoginForm providers={providers} callbackUrl={callbackUrl} />
       </Stack>
     </>
   );

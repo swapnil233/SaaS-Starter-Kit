@@ -21,10 +21,12 @@ import app from "@/lib/app";
 
 interface ILoginFormProps {
   providers: Provider[];
+  callbackUrl: string;
 }
 
-const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
+const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
   const [loading, setLoading] = useState(false);
+  console.log(callbackUrl);
 
   const form = useForm({
     initialValues: {
@@ -48,7 +50,7 @@ const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
 
     const result = await signIn("credentials", {
       redirect: true,
-      callbackUrl: "/",
+      callbackUrl: callbackUrl,
       email: values.email,
       password: values.password,
     });
@@ -94,7 +96,7 @@ const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
                 key={provider.name}
                 leftSection={provider.name === "Google" ? <GoogleIcon /> : null}
                 variant="default"
-                onClick={() => signIn(provider.id)}
+                onClick={() => signIn(provider.id, { callbackUrl })}
                 fullWidth
                 fw={400}
                 radius={"xs"}
