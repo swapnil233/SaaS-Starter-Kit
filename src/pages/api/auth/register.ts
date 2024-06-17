@@ -49,10 +49,6 @@ export default async function register(
     },
   });
 
-  if (user.name && user.password) {
-    console.log("New user registered. Sending welcome email...");
-    await sendWelcomeEmail(user.name, user.email);
-  }
-
+  await sendWelcomeEmail(user.name || "User", user.email);
   return res.status(201).json({ message: "User created", user });
 }
