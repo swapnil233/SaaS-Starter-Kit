@@ -7,6 +7,7 @@ import type { AppProps } from "next/app";
 import { RouterTransition } from "@/components/shared/RouterTransition";
 import { NextPageWithLayout } from "./page";
 import { Roboto } from "next/font/google";
+import "@mantine/notifications/styles.css";
 
 const roboto = Roboto({
   subsets: ["latin-ext"],

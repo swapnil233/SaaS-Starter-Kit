@@ -21,7 +21,7 @@ export const registerUser = async (
       console.error(response);
       notifications.show({
         title: "Registration failed",
-        message: `We couldn't register your account. Please refresh the page and try again. If the issue persists, try different credentials.`,
+        message: await response.text(),
         color: "red",
       });
       setLoading(false);

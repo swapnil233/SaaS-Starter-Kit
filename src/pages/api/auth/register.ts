@@ -25,7 +25,11 @@ export default async function register(
   });
 
   if (existingUser) {
-    return res.status(409).json({ message: "User already exists" });
+    return res
+      .status(409)
+      .send(
+        "A user with this email address already exists. Please try another."
+      );
   }
 
   const hashedPassword = await hash(password, SALT_ROUNDS);
