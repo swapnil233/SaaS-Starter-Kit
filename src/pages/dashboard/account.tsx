@@ -2,7 +2,7 @@ import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
 import SharedHead from "@/components/shared/SharedHead";
 import { auth } from "@/lib/auth/auth";
 import { NextPageWithLayout } from "@/pages/page";
-import { getUserById } from "@/services/user.service";
+import { getUser } from "@/services/user.service";
 import { Stack, Text, Title } from "@mantine/core";
 import { User } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
@@ -20,7 +20,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   try {
-    const user = await getUserById(session.user.id);
+    const user = await getUser({ id: session.user.id });
     return {
       props: {
         user: JSON.parse(JSON.stringify(user)),

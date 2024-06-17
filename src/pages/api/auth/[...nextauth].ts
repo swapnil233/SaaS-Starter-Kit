@@ -1,4 +1,3 @@
-// src/pages/api/auth/[...nextauth].ts
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -7,6 +6,7 @@ import type { Adapter } from "next-auth/adapters";
 import prisma from "@/lib/prisma";
 import { compare } from "bcrypt";
 import { sendWelcomeEmail } from "@/lib/email/sendWelcomeEmail";
+import { getUser } from "@/services/user.service";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.JWT_SECRET,
@@ -24,28 +24,28 @@ export const authOptions: NextAuthOptions = {
         password: {},
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
-          console.log("Email and password are required");
-          throw new Error("Email and password are required");
+        if (!credentials) {
+          throw new Error('No credentials');
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        const { email, password } = credentials;
+        if (!email || !password) {
+          return null;
+        }
+
+        const user = await getUser({ email });
 
         if (!user) {
-          console.log("No user found with the given email");
-          throw new Error("No user found with the given email");
+          throw new Error('Invalid credentials');
         }
 
         const isValid = await compare(
-          credentials.password,
+          password,
           user.password || ""
         );
 
         if (!isValid) {
-          console.log("Invalid password");
-          throw new Error("Invalid password");
+          throw new Error("Invalid credentials");
         }
 
         return {

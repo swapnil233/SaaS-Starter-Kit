@@ -1,18 +1,16 @@
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
 
-export async function getUserById(id: string): Promise<User> {
+export const getUser = async (key: { id: string } | { email: string }): Promise<User> => {
   try {
     return await prisma.user.findUniqueOrThrow({
-      where: {
-        id,
-      },
+      where: key,
     });
   } catch (error) {
-    console.log("Error on getUserById service", error);
-    throw new Error("Error retrieving user by ID in getUserById service");
+    console.log("Error on getUser service", error);
+    throw new Error("Error retrieving user in getUser service");
   }
-}
+};
 
 export async function getAllUsers(): Promise<User[]> {
   try {
