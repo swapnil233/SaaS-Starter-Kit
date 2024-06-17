@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials) {
-          throw new Error('No credentials');
+          throw new Error("No credentials");
         }
 
         const { email, password } = credentials;
@@ -36,13 +36,10 @@ export const authOptions: NextAuthOptions = {
         const user = await getUser({ email });
 
         if (!user) {
-          throw new Error('Invalid credentials');
+          throw new Error("Invalid credentials");
         }
 
-        const isValid = await compare(
-          password,
-          user.password || ""
-        );
+        const isValid = await compare(password, user.password || "");
 
         if (!isValid) {
           throw new Error("Invalid credentials");
