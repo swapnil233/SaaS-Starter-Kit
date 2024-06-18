@@ -31,7 +31,7 @@ export const registerUser = async (
     // Login user
     const result = await signIn("credentials", {
       redirect: true,
-      callbackUrl: "/",
+      callbackUrl: "/dashboard",
       email: values.email,
       password: values.password,
     });

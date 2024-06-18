@@ -18,15 +18,14 @@ import { FC, useState } from "react";
 import { GoogleIcon } from "../icons/GoogleIcon";
 import Image from "next/image";
 import app from "@/lib/app";
+import { notifications } from "@mantine/notifications";
 
 interface ILoginFormProps {
   providers: Provider[];
-  callbackUrl: string;
 }
 
-const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
+const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
   const [loading, setLoading] = useState(false);
-  console.log(callbackUrl);
 
   const form = useForm({
     initialValues: {
@@ -36,10 +35,6 @@ const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
-      password: (val) =>
-        val.length <= 6
-          ? "Password should include at least 6 characters"
-          : null,
     },
   });
 
@@ -50,13 +45,16 @@ const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
 
     const result = await signIn("credentials", {
       redirect: true,
-      callbackUrl: callbackUrl,
       email: values.email,
       password: values.password,
     });
 
     if (result?.error) {
-      alert("Login failed");
+      notifications.show({
+        title: "Signin failed",
+        message: "Invalid email or password. Please try again later.",
+        color: "red",
+      });
       setLoading(false);
     }
 
@@ -96,7 +94,7 @@ const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
                 key={provider.name}
                 leftSection={provider.name === "Google" ? <GoogleIcon /> : null}
                 variant="default"
-                onClick={() => signIn(provider.id, { callbackUrl })}
+                onClick={() => signIn(provider.id)}
                 fullWidth
                 fw={400}
                 radius={"xs"}

@@ -9,23 +9,19 @@ import app from "@/lib/app";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context.req, context.res);
-
   if (session) {
     return {
       redirect: {
-        destination: context.query.callbackUrl || "/dashboard",
+        destination: context.query.callbackUrl || "dashboard",
         permanent: false,
       },
     };
   }
 
   try {
-    const providers = await getProviders();
-
     return {
       props: {
-        providers,
-        callbackUrl: context.query.callbackUrl || "/",
+        providers: await getProviders(),
       },
     };
   } catch (error) {
@@ -37,15 +33,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 interface ISignInPage {
   providers: Provider[];
-  callbackUrl: string;
 }
 
-const SignInPage: React.FC<ISignInPage> = ({ providers, callbackUrl }) => {
+const SignInPage: React.FC<ISignInPage> = ({ providers }) => {
   return (
     <>
       <SharedHead title="Sign in" description={`Sign into ${app.name}`} />
       <Stack justify="center" align="center">
-        <LoginForm providers={providers} callbackUrl={callbackUrl} />
+        <LoginForm providers={providers} />
       </Stack>
     </>
   );
