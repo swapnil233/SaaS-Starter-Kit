@@ -18,7 +18,7 @@ const NotificationsButton: React.FC<INotificationsButtonProps> = ({
             aria-label="Notifications"
             size="lg"
           >
-            <IconBell stroke={1.8} color="black" />
+            <IconBell stroke={1.4} color="black" />
           </ActionIcon>
         </Indicator>
       </Menu.Target>
