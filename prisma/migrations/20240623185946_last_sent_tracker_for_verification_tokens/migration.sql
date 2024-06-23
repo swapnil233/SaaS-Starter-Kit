@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "VerificationToken" ADD COLUMN     "lastSent" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

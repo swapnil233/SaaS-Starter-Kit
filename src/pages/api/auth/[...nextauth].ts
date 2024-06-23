@@ -1,21 +1,28 @@
+import getGoogleCredentials from "@/lib/auth/getGoogleCredentials";
+import prisma from "@/lib/prisma";
+import { sendVerificationEmail } from "@/services/email.service";
+import { getUser } from "@/services/user.service";
+import { createNewVerificationToken } from "@/services/verification.service";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth, { NextAuthOptions } from "next-auth";
+import { compare } from "bcrypt";
+import NextAuth, { NextAuthOptions, Session } from "next-auth";
+import type { Adapter } from "next-auth/adapters";
+import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import type { Adapter } from "next-auth/adapters";
-import prisma from "@/lib/prisma";
-import { compare } from "bcrypt";
-import { sendWelcomeEmail } from "@/lib/email/sendWelcomeEmail";
-import { getUser } from "@/services/user.service";
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.JWT_SECRET,
+  secret: process.env.JWT_SECRET ?? "secret",
   adapter: PrismaAdapter(prisma) as Adapter,
-
+  session: {
+    strategy: "jwt",
+    maxAge: 60 * 60 * 24 * 14, // 14 days
+    updateAge: 60 * 60 * 12, // 12 hours
+  },
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: getGoogleCredentials().clientId,
+      clientSecret: getGoogleCredentials().clientSecret,
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -25,19 +32,16 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials) {
-          throw new Error("No credentials");
+          throw new Error("No credentials provided");
         }
 
         const { email, password } = credentials;
         if (!email || !password) {
-          return null;
+          throw new Error("Email and password are required");
         }
 
         const user = await getUser({ email });
-
-        if (!user) {
-          throw new Error("Invalid credentials");
-        }
+        if (!user) throw new Error("Invalid credentials");
 
         const isValid = await compare(password, user.password || "");
 
@@ -50,51 +54,62 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
+          emailVerified: user.emailVerified,
         };
       },
     }),
   ],
 
-  pages: {
-    signIn: "/signin",
-    // newUser: "/onboarding",
-  },
-
-  session: {
-    strategy: "jwt",
-    maxAge: 60 * 60 * 24 * 30, // 30 days
-    updateAge: 60 * 60 * 24, // 24 hours
-  },
-
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        token.emailVerified = (user as any).emailVerified;
+      } else if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { emailVerified: true },
+        });
+        token.emailVerified = dbUser?.emailVerified;
       }
       return token;
     },
-    async session({ session, token }) {
+
+    // Called whenever a session is checked.
+    // When using JWTs, the jwt() callback is invoked b4 this session() callback,
+    // so anything added to the JWT in jwt() will be available in session().
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (token && typeof token.id === "string") {
         session.user = {
           id: token.id,
-          name: token.name,
-          email: token.email,
-          image: token.picture,
+          name: token.name || null,
+          email: token.email || null,
+          image: token.picture || null,
+          emailVerified: token.emailVerified
+            ? new Date(token.emailVerified as string)
+            : null,
         };
       }
       return session;
     },
   },
-  // https://next-auth.js.org/configuration/events
   events: {
     async createUser({ user }) {
-      if (user.name && user.email) {
-        await sendWelcomeEmail(user.name, user.email);
+      if (user.email && !user.emailVerified) {
+        const verificationToken = await createNewVerificationToken(user.email);
+        await sendVerificationEmail(
+          user.name || "User",
+          user.email,
+          verificationToken.token
+        );
       }
     },
+  },
+
+  pages: {
+    signIn: "/signin",
   },
 };
 
 export default NextAuth(authOptions);
-
 export const config = authOptions;

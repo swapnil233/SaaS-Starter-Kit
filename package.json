@@ -9,6 +9,7 @@
     "lint": "next lint",
     "reset": "rm -rf node_modules && npm i && npm run postinstall",
     "prettier": "prettier --write .",
+    "reset:prod": "dotenv -e .env.production -- npx prisma migrate reset",
     "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
     "push:prod": "dotenv -e .env.production -- npx prisma db push",
     "prepack": "husky install",

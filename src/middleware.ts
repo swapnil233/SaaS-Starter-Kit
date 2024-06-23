@@ -1,6 +1,7 @@
 import micromatch from "micromatch";
-import { NextResponse } from "next/server";
+import { Session } from "next-auth";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 const protectedRoutes = ["/dashboard/**"];
 
@@ -26,9 +27,15 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(redirectUrl);
       }
 
-      const session = await response.json();
+      const session = (await response.json()) as Session;
+
       if (!session.user) {
         return NextResponse.redirect(redirectUrl);
+      }
+
+      if (!session.user.emailVerified) {
+        const url = new URL("/verify-email", req.url);
+        return NextResponse.redirect(url);
       }
     } catch (error) {
       console.error("Error during session fetch:", error);
