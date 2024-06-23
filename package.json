@@ -40,7 +40,8 @@
     "react": "^18",
     "react-dom": "^18",
     "react-email": "2.1.4",
-    "stripe": "^15.11.0"
+    "stripe": "^15.11.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
@@ -51,6 +52,7 @@
     "@types/nodemailer": "^6.4.15",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "husky": "^9.0.11",
