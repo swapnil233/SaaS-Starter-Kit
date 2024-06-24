@@ -1,5 +1,5 @@
+import { fetchSession } from "@/lib/auth/fetchSession";
 import micromatch from "micromatch";
-import { Session } from "next-auth";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -14,28 +14,15 @@ export default async function middleware(req: NextRequest) {
     redirectUrl.searchParams.set("callbackUrl", encodeURI(req.url));
 
     try {
-      const url = new URL("/api/auth/session", req.url);
-      const response = await fetch(url, {
-        headers: {
-          "Content-Type": "application/json",
-          cookie: req.headers.get("cookie") || "",
-        },
-      });
+      const session = await fetchSession(req);
 
-      if (!response.ok) {
-        console.error(`Failed to fetch session: ${response.statusText}`);
-        return NextResponse.redirect(redirectUrl);
-      }
-
-      const session = (await response.json()) as Session;
-
-      if (!session.user) {
+      if (!session?.user) {
         return NextResponse.redirect(redirectUrl);
       }
 
       if (!session.user.emailVerified) {
-        const url = new URL("/verify-email", req.url);
-        return NextResponse.redirect(url);
+        const verifyEmailUrl = new URL("/verify-email", req.url);
+        return NextResponse.redirect(verifyEmailUrl);
       }
     } catch (error) {
       console.error("Error during session fetch:", error);
