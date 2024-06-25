@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "reset": "rm -rf node_modules && npm i && npm run postinstall",
+    "reset": "rm -rf node_modules .next/ && npm i && npm run postinstall && npm run dev",
     "prettier": "prettier --write .",
     "reset:prod": "dotenv -e .env.production -- npx prisma migrate reset",
     "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
@@ -27,7 +27,7 @@
     "@mantine/modals": "^7.10.2",
     "@mantine/notifications": "^7.10.2",
     "@mantine/nprogress": "^7.10.2",
-    "@prisma/client": "^5.15.1",
+    "@prisma/client": "^5.16.0",
     "@react-email/components": "0.0.19",
     "@react-email/render": "^0.0.15",
     "@tabler/icons-react": "^3.6.0",
@@ -59,7 +59,7 @@
     "husky": "^9.0.11",
     "postcss": "^8",
     "prettier": "^3.3.1",
-    "prisma": "^5.15.1",
+    "prisma": "^5.16.0",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   }
