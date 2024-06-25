@@ -27,9 +27,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } catch (error) {
-    console.log("Couldn't fetch user");
+    console.error("Error fetching user:", error);
     return {
-      redirect: { destination: "/signin" },
+      redirect: {
+        destination: "/signin",
+        permanent: false,
+      },
     };
   }
 }
