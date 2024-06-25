@@ -12,7 +12,6 @@ export interface PricingPlans {
   monthly: PricingPlan[];
   yearly: PricingPlan[];
   oneTime: PricingPlan[];
-  free: PricingPlan[];
 }
 
 export const pricingPlans: PricingPlans = {
@@ -124,16 +123,6 @@ export const pricingPlans: PricingPlans = {
       ],
       priceId: "price_1PRrUkKG4eoKdRb1wT9jpsy0",
       purchaseLink: "https://buy.stripe.com/test_4gwg1QaXY1BC4IU4go",
-    },
-  ],
-  free: [
-    {
-      title: "Free Plan",
-      description: "A basic plan that is free forever.",
-      price: 0,
-      features: ["Up to 50 contacts", "Basic reporting", "Community support"],
-      priceId: "price_1PRrSOKG4eoKdRb1fSE4eaHZ",
-      purchaseLink: "https://buy.stripe.com/test_aEU9Dsc221BC5MY9AH",
     },
   ],
 };

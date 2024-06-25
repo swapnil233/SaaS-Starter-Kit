@@ -1,10 +1,11 @@
-import { FC } from "react";
-import { useSession } from "next-auth/react";
-import { Badge, Button, Group } from "@mantine/core";
-import Link from "next/link";
-import { PricingPlan } from "@/lib/stripe/pricing";
-import { IconCheck } from "@tabler/icons-react";
 import { getSubscriptionLink } from "@/lib/stripe/getSubscriptionLink";
+import { PricingPlan } from "@/lib/stripe/pricing";
+import { Badge, Button, Group } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC } from "react";
 
 interface PricingCardProps extends PricingPlan {
   billingCycle: "monthly" | "yearly" | "oneTime" | "free";
@@ -20,6 +21,7 @@ const PricingCard: FC<PricingCardProps> = ({
   purchaseLink,
 }) => {
   const session = useSession();
+  const router = useRouter();
 
   return (
     <div className="bg-white p-6 rounded-md shadow-sm flex flex-col">
@@ -59,7 +61,11 @@ const PricingCard: FC<PricingCardProps> = ({
         radius="xs"
         component={Link}
         target="_blank"
-        href={getSubscriptionLink(session, purchaseLink)}
+        href={
+          router.pathname !== "/dashboard/plans"
+            ? "/dashboard/plans"
+            : getSubscriptionLink(session, purchaseLink)
+        }
       >
         Get started
       </Button>

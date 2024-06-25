@@ -7,11 +7,11 @@ import {
   Stack,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { FC, ReactNode, useState } from "react";
 import { useSession } from "next-auth/react";
-import UserNavMenu from "../user/UserNavMenu";
 import Link from "next/link";
+import { FC, ReactNode, useState } from "react";
 import NotificationsButton from "../user/NotificationsButton";
+import UserNavMenu from "../user/UserNavMenu";
 
 export interface IDashboardLayout {
   children: ReactNode;
@@ -59,7 +59,7 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
             <Button component={Link} href="/dashboard">
               Dashboard
             </Button>
-            <Button component={Link} href="/plans">
+            <Button component={Link} href="/dashboard/plans">
               Plans
             </Button>
           </Stack>
