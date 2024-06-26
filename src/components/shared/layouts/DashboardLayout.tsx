@@ -5,8 +5,10 @@ import {
   Group,
   ScrollArea,
   Stack,
+  TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconSearch } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC, ReactNode, useState } from "react";
@@ -48,6 +50,12 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
             size="sm"
           />
           <Group gap="xs">
+            <TextInput
+              leftSection={<IconSearch size="1.1rem" />}
+              placeholder="Search and discover"
+              miw={300}
+              visibleFrom="sm"
+            />
             <NotificationsButton newNotifications={newNotifications} />
             <UserNavMenu image={session.data?.user.image || ""} />
           </Group>
