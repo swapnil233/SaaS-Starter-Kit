@@ -1,17 +1,19 @@
+import { RouterTransition } from "@/components/shared/RouterTransition";
 import "@/styles/globals.css";
 import { MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import "@mantine/notifications/styles.css";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
-import { RouterTransition } from "@/components/shared/RouterTransition";
-import { NextPageWithLayout } from "./page";
 import { Roboto } from "next/font/google";
-import "@mantine/notifications/styles.css";
+import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { NextPageWithLayout } from "./page";
 
 const roboto = Roboto({
   subsets: ["latin-ext"],
-  weight: ["400", "700"],
+  weight: ["100", "300", "400", "500", "700", "900"],
 });
 
 interface AppPropsWithLayout extends AppProps {
@@ -25,19 +27,23 @@ export default function App({
   // Use the layout defined at the page level if available
   const getLayout = Component.getLayout || ((page) => page);
 
+  const [queryClient] = useState(() => new QueryClient());
+
   return (
     <>
-      <SessionProvider session={session}>
-        <MantineProvider withGlobalClasses defaultColorScheme="light">
-          <RouterTransition />
-          {getLayout(
-            <main className={roboto.className}>
-              <Component {...pageProps} />
-            </main>
-          )}
-          <Notifications position="top-right" />
-        </MantineProvider>
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider session={session}>
+          <MantineProvider withGlobalClasses defaultColorScheme="light">
+            <RouterTransition />
+            {getLayout(
+              <main className={roboto.className}>
+                <Component {...pageProps} />
+              </main>
+            )}
+            <Notifications position="top-right" />
+          </MantineProvider>
+        </SessionProvider>
+      </QueryClientProvider>
     </>
   );
 }
