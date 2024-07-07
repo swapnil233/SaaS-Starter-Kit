@@ -1,3 +1,6 @@
+import useRegistrationForm from "@/hooks/useRegistrationForm";
+import app from "@/lib/app";
+import isPasswordValid from "@/lib/auth/isPasswordValid";
 import {
   Anchor,
   Button,
@@ -9,41 +12,27 @@ import {
   TextInput,
   Title,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { Provider } from "next-auth/providers/index";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
-import { FC, useState } from "react";
-import { registerUser } from "@/services/auth.service";
 import Image from "next/image";
-import app from "@/lib/app";
+import Link from "next/link";
 import { GoogleIcon } from "../icons/GoogleIcon";
 import { PasswordStrength } from "./PasswordStrength";
-import isPasswordValid from "@/lib/auth/isPasswordValid";
 
 interface IRegistrationFormProps {
   providers: Provider[];
 }
 
-const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const form = useForm({
-    initialValues: {
-      email: "",
-      name: "",
-      password: "",
-    },
-
-    validate: {
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
-    },
-  });
-
-  const handleSubmit = async (values: typeof form.values) => {
-    if (loading) return;
-    await registerUser(values, setLoading);
-  };
+const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
+  const {
+    register,
+    handleSubmit,
+    errors,
+    onSubmit,
+    isLoading,
+    watch,
+    setValue,
+  } = useRegistrationForm();
 
   return (
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
@@ -95,16 +84,14 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
         my="lg"
       />
 
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Stack>
           <TextInput
             label="Name"
             required
             placeholder="John Doe"
-            value={form.values.name}
-            onChange={(event) =>
-              form.setFieldValue("name", event.currentTarget.value)
-            }
+            {...register("name")}
+            error={errors.name?.message}
             radius="xs"
           />
 
@@ -112,28 +99,25 @@ const RegistrationForm: FC<IRegistrationFormProps> = ({ providers }) => {
             required
             label="Email"
             placeholder="john.doe@work.com"
-            value={form.values.email}
-            onChange={(event) =>
-              form.setFieldValue("email", event.currentTarget.value)
-            }
-            error={form.errors.email && "Invalid email"}
+            {...register("email")}
+            error={errors.email?.message}
             radius="xs"
           />
 
           <PasswordStrength
-            value={form.values.password}
-            onChange={(value: string) => form.setFieldValue("password", value)}
+            value={watch("password") || ""}
+            onChange={(value: string) => setValue("password", value)}
           />
         </Stack>
 
         <Stack mt={"xl"} align="stretch">
           <Button
             type="submit"
-            loading={loading}
+            loading={isLoading}
             radius="xs"
-            disabled={!isPasswordValid(form.values.password)}
+            disabled={!isPasswordValid(watch("password"))}
           >
-            {!loading ? "Get started" : "Registering..."}
+            {!isLoading ? "Get started" : "Registering..."}
           </Button>
           <Group gap={3} align="stretch" justify="center">
             <Text size="sm">Already have an account?</Text>
