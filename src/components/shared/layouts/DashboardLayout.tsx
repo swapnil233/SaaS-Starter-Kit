@@ -1,16 +1,25 @@
+import NavButton from "@/components/buttons/NavButton";
 import {
   AppShell,
   Burger,
-  Button,
   Group,
   ScrollArea,
   Stack,
   TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
+import {
+  IconBolt,
+  IconBuildingBank,
+  IconChartBar,
+  IconFile,
+  IconHome,
+  IconInbox,
+  IconSearch,
+  IconUser,
+  IconUserPlus,
+} from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { FC, ReactNode, useState } from "react";
 import NotificationsButton from "../user/NotificationsButton";
 import UserNavMenu from "../user/UserNavMenu";
@@ -63,13 +72,65 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
       </AppShell.Header>
       <AppShell.Navbar>
         <AppShell.Section p="md" grow component={ScrollArea}>
-          <Stack align="flex-start">
-            <Button component={Link} href="/dashboard">
-              Dashboard
-            </Button>
-            <Button component={Link} href="/dashboard/plans">
-              Plans
-            </Button>
+          <Stack>
+            <Stack>
+              <Stack gap="xs">
+                <NavButton
+                  href="/dashboard"
+                  icon={<IconHome size={20} />}
+                  label="Home"
+                />
+                <NavButton
+                  href="/inbox"
+                  icon={<IconInbox size={20} />}
+                  label="Inbox"
+                />
+                <NavButton
+                  href="/reports"
+                  icon={<IconChartBar size={20} />}
+                  label="Reports"
+                />
+              </Stack>
+
+              <Stack gap="xs">
+                <div className="mt-4 px-4 text-xs font-semibold text-gray-400 uppercase">
+                  Apps
+                </div>
+                <NavButton
+                  href="/documents"
+                  icon={<IconFile size={20} />}
+                  label="Documents"
+                />
+                <NavButton
+                  href="/automations"
+                  icon={<IconBolt size={20} />}
+                  label="Automations"
+                />
+              </Stack>
+
+              <Stack gap="xs">
+                <div className="mt-4 px-4 text-xs font-semibold text-gray-400 uppercase">
+                  Settings
+                </div>
+                <NavButton
+                  href="/dashboard/account"
+                  icon={<IconUser size={20} />}
+                  label="Account"
+                />
+                <NavButton
+                  href="/dashboard/plans"
+                  icon={<IconBuildingBank size={20} />}
+                  label="Pricing plans"
+                />
+              </Stack>
+            </Stack>
+            <div className="absolute bottom-0 left-0 p-4 w-full border-t">
+              <NavButton
+                href="/invite"
+                icon={<IconUserPlus size={20} />}
+                label="Invite people"
+              />
+            </div>
           </Stack>
         </AppShell.Section>
       </AppShell.Navbar>
