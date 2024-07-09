@@ -14,6 +14,19 @@ export const getUser = async (
   }
 };
 
+export const getUserAccount = async (userId: string) => {
+  try {
+    return await prisma.account.findFirst({
+      where: {
+        userId,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching Account", error);
+    throw new Error("Error fetching Account");
+  }
+};
+
 export async function getAllUsers(): Promise<User[]> {
   try {
     return await prisma.user.findMany();
