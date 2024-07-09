@@ -134,7 +134,7 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
           </Stack>
         </AppShell.Section>
       </AppShell.Navbar>
-      <AppShell.Main bg="#f7f7f7">{children}</AppShell.Main>
+      <AppShell.Main bg="#f7fafd">{children}</AppShell.Main>
     </AppShell>
   );
 };
