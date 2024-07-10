@@ -1,14 +1,16 @@
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String    @unique
+    id            String           @id @default(cuid())
+    name          String
+    preferredName String?
+    email         String           @unique
     emailVerified DateTime?
     password      String?
     image         String?
-    role          UserRole  @default(USER)
+    role          UserRole         @default(USER)
     accounts      Account[]
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+    preferences   UserPreferences?
+    createdAt     DateTime         @default(now())
+    updatedAt     DateTime         @updatedAt
 }
 
 model Account {
@@ -45,4 +47,27 @@ model VerificationToken {
     lastSent DateTime @default(now())
 
     @@unique([email, token])
+}
+
+enum ContactTimePreference {
+    MORNING
+    AFTERNOON
+    EVENING
+}
+
+model UserPreferences {
+    id                    String                 @id @default(cuid())
+    userId                String                 @unique
+    emailNotifications    Boolean                @default(true)
+    smsNotifications      Boolean                @default(false)
+    pushNotifications     Boolean                @default(false)
+    contactTimePreference ContactTimePreference?
+    darkMode              Boolean                @default(false)
+    language              String                 @default("en") // default language
+    newsletterSubscribed  Boolean                @default(true) // subscription to newsletters
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

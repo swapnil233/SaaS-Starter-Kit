@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import { User } from "@prisma/client";
+import { User, UserPreferences } from "@prisma/client";
 
 export const getUser = async (
   key: { id: string } | { email: string }
@@ -27,12 +27,116 @@ export const getUserAccount = async (userId: string) => {
   }
 };
 
+export const getUserPreferences = async (
+  userId: string
+): Promise<UserPreferences | null> => {
+  try {
+    return await prisma.userPreferences.findUnique({
+      where: {
+        userId,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user preferences", error);
+    throw new Error("Error fetching user preferences");
+  }
+};
+
 export async function getAllUsers(): Promise<User[]> {
   try {
     return await prisma.user.findMany();
   } catch (error) {
     console.error("Error retrieving all users", error);
     throw new Error("Error retrieving all users");
+  }
+}
+
+export async function createUserWithEmailAndPassword(
+  email: string,
+  name: string,
+  hashedPassword: string
+): Promise<User> {
+  try {
+    return await prisma.user.create({
+      data: {
+        email,
+        name,
+        password: hashedPassword,
+        emailVerified: null,
+        accounts: {
+          create: {
+            type: "credentials",
+            provider: "email",
+            providerAccountId: email,
+          },
+        },
+        preferences: {
+          create: {
+            contactTimePreference: "MORNING",
+            emailNotifications: true,
+            pushNotifications: true,
+            smsNotifications: true,
+            darkMode: false, // You can customize default preferences here
+            language: "en",
+            newsletterSubscribed: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("Error creating user", error);
+    throw new Error("Error creating user");
+  }
+}
+
+export async function updateUser(
+  userId: string,
+  data: Partial<User>
+): Promise<User> {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  if (Object.keys(data).length === 0) {
+    throw new Error("No data provided for update");
+  }
+
+  try {
+    return await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data,
+    });
+  } catch (error) {
+    console.error("Error updating user", error);
+    throw new Error("Error updating user");
+  }
+}
+
+export async function updateUserPreferences(
+  userId: string,
+  preferencesData: Partial<UserPreferences>
+): Promise<UserPreferences> {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  if (Object.keys(preferencesData).length === 0) {
+    throw new Error("No data provided for update");
+  }
+
+  try {
+    const updatedPreferences = await prisma.userPreferences.update({
+      where: {
+        userId: userId,
+      },
+      data: preferencesData,
+    });
+    return updatedPreferences;
+  } catch (error) {
+    console.error("Error updating user preferences", error);
+    throw new Error("Error updating user preferences");
   }
 }
 
@@ -67,5 +171,18 @@ export async function deleteVerificationToken(tokenId: string) {
   } catch (error) {
     console.error("Error deleting verification token", error);
     throw new Error("Error deleting verification token");
+  }
+}
+
+export async function deleteUserAccount(userId: string) {
+  try {
+    await prisma.user.delete({
+      where: {
+        id: userId,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting user account", error);
+    throw new Error("Error deleting user account");
   }
 }

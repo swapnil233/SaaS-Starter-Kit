@@ -11,7 +11,6 @@
     "prettier": "prettier --write .",
     "reset:prod": "dotenv -e .env.production -- npx prisma migrate reset",
     "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
-    "push:prod": "dotenv -e .env.production -- npx prisma db push",
     "prepack": "husky install",
     "postinstall": "prisma generate",
     "prepare": "husky",

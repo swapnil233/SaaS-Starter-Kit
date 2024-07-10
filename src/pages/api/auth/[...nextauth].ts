@@ -76,7 +76,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     // Called whenever a session is checked.
-    // When using JWTs, the jwt() callback is invoked b4 this session() callback,
+    // When using JWTs, the jwt() callback is invoked before this session() callback,
     // so anything added to the JWT in jwt() will be available in session().
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token && typeof token.id === "string") {
@@ -103,6 +103,17 @@ export const authOptions: NextAuthOptions = {
           verificationToken.token
         );
       }
+
+      await prisma.userPreferences.create({
+        data: {
+          contactTimePreference: "MORNING",
+          emailNotifications: true,
+          pushNotifications: true,
+          smsNotifications: true,
+          darkMode: false,
+          userId: user.id,
+        },
+      });
     },
   },
 

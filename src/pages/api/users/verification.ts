@@ -1,6 +1,5 @@
-import prisma from "@/lib/prisma";
 import { sendVerificationEmail } from "@/services/email.service";
-import { getUser } from "@/services/user.service";
+import { deleteVerificationToken, getUser } from "@/services/user.service";
 import {
   createNewVerificationToken,
   getVerificationToken,
@@ -46,11 +45,7 @@ export default async function handler(
           });
         }
 
-        await prisma.verificationToken.delete({
-          where: {
-            id: existingToken.id,
-          },
-        });
+        await deleteVerificationToken(existingToken.id);
       }
 
       const { token } = await createNewVerificationToken(user.email);

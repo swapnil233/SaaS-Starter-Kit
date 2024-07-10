@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { updateUser } from "@/services/user.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
@@ -25,10 +25,7 @@ export default async function handler(
     const { id, ...data } = updateUserSchema.parse(req.body);
 
     // Update the user in the database
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data,
-    });
+    const updatedUser = await updateUser(id, data);
 
     // Return the updated user data
     return res.status(200).json(updatedUser);

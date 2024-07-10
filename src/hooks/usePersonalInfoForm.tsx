@@ -1,40 +1,61 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { notifications } from "@mantine/notifications";
-import { User } from "@prisma/client";
+import { User, UserPreferences } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { z } from "zod";
 
-interface FormData {
+interface PersonalInfoFormData {
   name: string;
-  email: string;
+  preferredName: string;
+  emailNotifications: boolean;
+  smsNotifications: boolean;
+  pushNotifications: boolean;
+  contactTimePreference: string;
+  darkMode: boolean;
+  language: string;
+  newsletterSubscribed: boolean;
 }
 
-type UpdateData = Partial<Pick<User, "name" | "email">>;
-
 const schema = z.object({
-  name: z.string().min(1, "Full name is required").optional(),
-  email: z.string().email("Invalid email address").optional(),
+  name: z.string().min(1, "Full name is required"),
+  preferredName: z.string().optional(),
+  emailNotifications: z.boolean(),
+  smsNotifications: z.boolean(),
+  pushNotifications: z.boolean(),
+  contactTimePreference: z.enum(["MORNING", "AFTERNOON", "EVENING"]).optional(),
+  darkMode: z.boolean(),
+  language: z.string().optional(),
+  newsletterSubscribed: z.boolean(),
 });
 
-const useAccountForm = (user: User) => {
+const usePersonalInfoForm = (user: User, preferences: UserPreferences) => {
   const queryClient = useQueryClient();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+    setValue,
+    watch,
+  } = useForm<PersonalInfoFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: user.name || "",
-      email: user.email || "",
+      preferredName: user.preferredName || "",
+      emailNotifications: preferences.emailNotifications,
+      smsNotifications: preferences.smsNotifications,
+      pushNotifications: preferences.pushNotifications,
+      contactTimePreference: preferences.contactTimePreference || "MORNING",
+      darkMode: preferences.darkMode || false,
+      language: preferences.language || "en",
+      newsletterSubscribed: preferences.newsletterSubscribed || true,
     },
   });
 
   const mutation = useMutation(
-    async (data: UpdateData) => {
-      const response = await fetch("/api/updateUser", {
+    async (data: PersonalInfoFormData) => {
+      const response = await fetch("/api/users/updateUserPreferences", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -81,12 +102,8 @@ const useAccountForm = (user: User) => {
     }
   );
 
-  const onSubmit = (data: FormData) => {
-    // Filter out empty fields
-    const updatedFields: UpdateData = Object.fromEntries(
-      Object.entries(data).filter(([_, value]) => value !== "")
-    );
-    mutation.mutate(updatedFields);
+  const onSubmit = (data: PersonalInfoFormData) => {
+    mutation.mutate(data);
   };
 
   return {
@@ -95,7 +112,9 @@ const useAccountForm = (user: User) => {
     errors,
     onSubmit,
     isLoading: mutation.isLoading,
+    setValue,
+    watch,
   };
 };
 
-export default useAccountForm;
+export default usePersonalInfoForm;

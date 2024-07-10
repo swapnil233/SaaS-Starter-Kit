@@ -1,6 +1,8 @@
-import prisma from "@/lib/prisma";
 import { sendVerificationEmail } from "@/services/email.service";
-import { getUser } from "@/services/user.service";
+import {
+  createUserWithEmailAndPassword,
+  getUser,
+} from "@/services/user.service";
 import { createNewVerificationToken } from "@/services/verification.service";
 import { hash } from "bcrypt";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -12,15 +14,16 @@ export default async function register(
   res: NextApiResponse
 ) {
   if (req.method !== "POST") {
-    console.log("405");
     return res.status(405).end();
   }
 
+  // Validate the request body
   const { email, password, name } = req.body;
   if (!email || !password || !name) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
+  // Check if a user with the same email already exists
   const existingUser = await getUser({ email });
   if (existingUser) {
     return res
@@ -30,23 +33,15 @@ export default async function register(
       );
   }
 
+  // Hash the password
   const hashedPassword = await hash(password, SALT_ROUNDS);
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      name,
-      password: hashedPassword,
-      emailVerified: null,
-      accounts: {
-        create: {
-          type: "credentials",
-          provider: "email",
-          providerAccountId: email,
-        },
-      },
-    },
-  });
+  // Create a new user in the DB
+  const user = await createUserWithEmailAndPassword(
+    email,
+    name,
+    hashedPassword
+  );
 
   // Create a new verification token in the DB
   const verificationToken = await createNewVerificationToken(user.email);
