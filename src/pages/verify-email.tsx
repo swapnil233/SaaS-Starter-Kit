@@ -9,10 +9,10 @@ import {
   updateVerificationTokenAndEmail,
 } from "@/services/user.service";
 import { getVerificationToken } from "@/services/verification.service";
-import { Button, Card, Stack, Text, Title } from "@mantine/core";
+import { Button, Card, Group, Stack, Text, Title } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { GetServerSidePropsContext } from "next";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 
@@ -168,7 +168,7 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
           return null;
         });
       }, 1000);
-      return () => clearInterval(interval); // Cleanup on component unmount
+      return () => clearInterval(interval);
     }
   }, [cooldown]);
 
@@ -217,6 +217,22 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
         title="Verify email"
         description="Verify your email address."
       />
+      <Group p="md" justify="space-between" align="center" h="100%">
+        <Link href="/">
+          <Title order={3}>{app.name}</Title>
+        </Link>
+        <Button
+          size="sm"
+          onClick={() =>
+            signOut({
+              redirect: true,
+              callbackUrl: "/",
+            })
+          }
+        >
+          Sign Out
+        </Button>
+      </Group>
       <Stack h="100vh" w="95%" align="center" justify="center" m="0 auto">
         <Card p={"md"} shadow="sm" withBorder maw={600} aria-live="polite">
           <Stack>
