@@ -1,3 +1,4 @@
+import app from "@/lib/app";
 import {
   Anchor,
   Button,
@@ -11,21 +12,23 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import { Provider } from "next-auth/providers/index";
 import { signIn } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { GoogleIcon } from "../icons/GoogleIcon";
-import Image from "next/image";
-import app from "@/lib/app";
-import { notifications } from "@mantine/notifications";
 
 interface ILoginFormProps {
   providers: Provider[];
+  callbackUrl: string;
 }
 
-const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
+const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm({
     initialValues: {
@@ -44,18 +47,21 @@ const LoginForm: FC<ILoginFormProps> = ({ providers }) => {
     setLoading(true);
 
     const result = await signIn("credentials", {
-      redirect: true,
+      redirect: false,
       email: values.email,
       password: values.password,
+      callbackUrl,
     });
 
     if (result?.error) {
       notifications.show({
-        title: "Signin failed",
-        message: "Invalid email or password. Please try again later.",
+        title: "Login Failed",
+        message:
+          "The email or password you entered is incorrect. Please try again.",
         color: "red",
       });
-      setLoading(false);
+    } else if (result?.url) {
+      router.push(result.url);
     }
 
     setLoading(false);
