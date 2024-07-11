@@ -3,7 +3,7 @@ import micromatch from "micromatch";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-const protectedRoutes = ["/dashboard/**", "/api/updateUser"];
+const protectedRoutes = ["/dashboard/**", "/api/users/**"];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
