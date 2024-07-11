@@ -122,6 +122,8 @@ const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
           <TextInput
             required
             label="Email"
+            type="email"
+            autoComplete="email"
             placeholder="john.doe@work.com"
             value={form.values.email}
             onChange={(event) =>
@@ -136,6 +138,7 @@ const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
             label="Password"
             placeholder="Your password"
             value={form.values.password}
+            type="password"
             onChange={(event) => {
               form.setFieldValue("password", event.currentTarget.value);
             }}

@@ -89,6 +89,8 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
           <TextInput
             label="Name"
             required
+            type="text"
+            autoComplete="name"
             placeholder="John Doe"
             {...register("name")}
             error={errors.name?.message}
@@ -98,6 +100,8 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
           <TextInput
             required
             label="Email"
+            type="email"
+            autoComplete="email"
             placeholder="john.doe@work.com"
             {...register("email")}
             error={errors.email?.message}

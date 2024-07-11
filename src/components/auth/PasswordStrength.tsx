@@ -1,10 +1,10 @@
 // This component has been modified from
 // https://github.com/mantinedev/ui.mantine.dev/blob/master/lib/PasswordStrength/PasswordStrength.tsx
 
-import { Group, PasswordInput, Progress } from "@mantine/core";
 import getPasswordStrength from "@/lib/auth/getPasswordStrength";
-import PasswordRequirement from "./PasswordRequirement";
 import passwordRequirements from "@/lib/auth/passwordRequirements";
+import { Group, PasswordInput, Progress } from "@mantine/core";
+import PasswordRequirement from "./PasswordRequirement";
 
 interface PasswordStrengthProps {
   value: string;
@@ -46,6 +46,7 @@ export function PasswordStrength({ value, onChange }: PasswordStrengthProps) {
         placeholder="Your password"
         label="Password"
         required
+        type="password"
         radius={"xs"}
       />
 
