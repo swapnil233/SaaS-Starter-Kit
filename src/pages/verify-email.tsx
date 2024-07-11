@@ -131,7 +131,7 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
       if (session.data?.user.email) {
         try {
           const response = await fetch(
-            `/api/users/cooldown?email=${session.data.user.email}`
+            `/api/cooldown?email=${session.data.user.email}`
           );
           const data = await response.json();
           if (response.ok) {
