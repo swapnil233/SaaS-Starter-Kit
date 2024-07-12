@@ -187,7 +187,11 @@ export async function deleteUserAccount(userId: string) {
   }
 }
 
-export async function createPasswordResetToken(data: { userId: string; token: string; expiresAt: Date }) {
+export async function createPasswordResetToken(data: {
+  userId: string;
+  token: string;
+  expiresAt: Date;
+}) {
   try {
     return await prisma.passwordResetToken.create({ data });
   } catch (error) {

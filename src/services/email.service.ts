@@ -33,7 +33,11 @@ export const sendVerificationEmail = async (
   });
 };
 
-export const sendPasswordResetEmail = async (email: string, name: string, token: string) => {
+export const sendPasswordResetEmail = async (
+  email: string,
+  name: string,
+  token: string
+) => {
   const subject = `${app.name} - Reset Your Password`;
   const resetLink = `${host}/reset-password?token=${token}`;
 
