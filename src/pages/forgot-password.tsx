@@ -3,9 +3,9 @@ import SharedHead from "@/components/shared/SharedHead";
 import app from "@/lib/app";
 import { Stack } from "@mantine/core";
 
-interface ISignInPage {}
+interface IForgotPasswordPage {}
 
-const SignInPage: React.FC<ISignInPage> = () => {
+const ForgotPasswordPage: React.FC<IForgotPasswordPage> = () => {
   return (
     <>
       <SharedHead title="Sign in" description={`Sign into ${app.name}`} />
@@ -16,4 +16,4 @@ const SignInPage: React.FC<ISignInPage> = () => {
   );
 };
 
-export default SignInPage;
+export default ForgotPasswordPage;
