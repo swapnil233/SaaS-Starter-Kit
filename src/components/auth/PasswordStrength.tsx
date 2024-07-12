@@ -3,15 +3,14 @@
 
 import getPasswordStrength from "@/lib/auth/getPasswordStrength";
 import passwordRequirements from "@/lib/auth/passwordRequirements";
-import { Group, PasswordInput, Progress } from "@mantine/core";
+import { Group, Progress } from "@mantine/core";
 import PasswordRequirement from "./PasswordRequirement";
 
 interface PasswordStrengthProps {
   value: string;
-  onChange: (_value: string) => void;
 }
 
-export function PasswordStrength({ value, onChange }: PasswordStrengthProps) {
+export function PasswordStrength({ value }: PasswordStrengthProps) {
   const strength = getPasswordStrength(value);
   const checks = passwordRequirements.map((requirement, index) => (
     <PasswordRequirement
@@ -40,16 +39,6 @@ export function PasswordStrength({ value, onChange }: PasswordStrengthProps) {
 
   return (
     <div>
-      <PasswordInput
-        value={value}
-        onChange={(event) => onChange(event.currentTarget.value)}
-        placeholder="Your password"
-        label="Password"
-        required
-        type="password"
-        radius={"xs"}
-      />
-
       <Group gap={5} grow mt="xs" mb="md">
         {bars}
       </Group>

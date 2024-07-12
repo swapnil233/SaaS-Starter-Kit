@@ -7,6 +7,7 @@ import {
   Divider,
   Group,
   Paper,
+  PasswordInput,
   Stack,
   Text,
   TextInput,
@@ -33,6 +34,8 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
     watch,
     setValue,
   } = useRegistrationForm();
+
+  const password = watch("password");
 
   return (
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
@@ -108,10 +111,19 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
             radius="xs"
           />
 
-          <PasswordStrength
-            value={watch("password") || ""}
-            onChange={(value: string) => setValue("password", value)}
+          <PasswordInput
+            required
+            label="Password"
+            placeholder="Your password"
+            value={password || ""}
+            onChange={(event) =>
+              setValue("password", event.currentTarget.value)
+            }
+            error={errors.password?.message}
+            radius="xs"
           />
+
+          <PasswordStrength value={password || ""} />
         </Stack>
 
         <Stack mt={"xl"} align="stretch">
