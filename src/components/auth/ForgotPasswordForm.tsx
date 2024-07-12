@@ -2,7 +2,6 @@ import app from "@/lib/app";
 import {
   Anchor,
   Button,
-  Divider,
   Group,
   Paper,
   Stack,
@@ -46,6 +45,8 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
       body: JSON.stringify({ email: values.email }),
     });
 
+    const data = await result.json();
+
     if (result.ok) {
       notifications.show({
         title: "Password Reset Sent",
@@ -55,10 +56,12 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
       router.push("/signin");
     } else {
       notifications.show({
-        title: "Error",
+        title: "Could not reset password",
         message:
-          "There was an error sending the password reset email. Please try again.",
+          data.error ||
+          "An error occurred while resetting your password. We are working to resolve this issue.",
         color: "red",
+        withCloseButton: false,
       });
     }
 
@@ -90,8 +93,6 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
           <Text>Enter your email to reset your password.</Text>
         </Stack>
       </Stack>
-
-      <Divider my="lg" />
 
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
