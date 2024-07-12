@@ -1,3 +1,4 @@
+import PasswordResetEmail from "@/components/emails/PasswordResetEmail";
 import VerificationEmail from "@/components/emails/VerificationEmail";
 import WelcomeEmail from "@/components/emails/WelcomeEmail";
 import app from "@/lib/app";
@@ -25,6 +26,25 @@ export const sendVerificationEmail = async (
   const verificationLink = `${host}/verify-email?token=${token}`;
 
   const html = render(VerificationEmail({ name, subject, verificationLink }));
+  await sendEmail({
+    to: email,
+    subject,
+    html,
+  });
+};
+
+export const sendPasswordResetEmail = async (email: string, name: string, token: string) => {
+  const subject = `${app.name} - Reset Your Password`;
+  const resetLink = `${host}/reset-password?token=${token}`;
+
+  const html = render(
+    PasswordResetEmail({
+      name,
+      subject,
+      resetLink,
+    })
+  );
+
   await sendEmail({
     to: email,
     subject,

@@ -186,3 +186,25 @@ export async function deleteUserAccount(userId: string) {
     throw new Error("Error deleting user account");
   }
 }
+
+export async function createPasswordResetToken(data: { userId: string; token: string; expiresAt: Date }) {
+  try {
+    return await prisma.passwordResetToken.create({ data });
+  } catch (error) {
+    console.error("Error creating password reset token", error);
+    throw new Error("Error creating password reset token");
+  }
+}
+
+export async function deletePasswordResetToken(tokenId: string) {
+  try {
+    return await prisma.passwordResetToken.delete({
+      where: {
+        id: tokenId,
+      },
+    });
+  } catch (error) {
+    console.error("Error deleting password reset token", error);
+    throw new Error("Error deleting password reset token");
+  }
+}

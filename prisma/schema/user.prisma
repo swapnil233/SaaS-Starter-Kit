@@ -1,16 +1,17 @@
 model User {
-    id            String           @id @default(cuid())
-    name          String
-    preferredName String?
-    email         String           @unique
-    emailVerified DateTime?
-    password      String?
-    image         String?
-    role          UserRole         @default(USER)
-    accounts      Account[]
-    preferences   UserPreferences?
-    createdAt     DateTime         @default(now())
-    updatedAt     DateTime         @updatedAt
+    id                 String               @id @default(cuid())
+    name               String
+    preferredName      String?
+    email              String               @unique
+    emailVerified      DateTime?
+    password           String?
+    image              String?
+    role               UserRole             @default(USER)
+    accounts           Account[]
+    preferences        UserPreferences?
+    createdAt          DateTime             @default(now())
+    updatedAt          DateTime             @updatedAt
+    PasswordResetToken PasswordResetToken[]
 }
 
 model Account {
@@ -70,4 +71,13 @@ model UserPreferences {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+model PasswordResetToken {
+    id        String   @id @default(cuid())
+    token     String   @unique
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    expiresAt DateTime
+    createdAt DateTime @default(now())
 }

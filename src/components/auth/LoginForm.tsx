@@ -2,6 +2,7 @@ import app from "@/lib/app";
 import {
   Anchor,
   Button,
+  Checkbox,
   Divider,
   Group,
   Paper,
@@ -133,21 +134,34 @@ const LoginForm: FC<ILoginFormProps> = ({ providers, callbackUrl }) => {
             radius="xs"
           />
 
-          <PasswordInput
-            required
-            label="Password"
-            placeholder="Your password"
-            value={form.values.password}
-            type="password"
-            onChange={(event) => {
-              form.setFieldValue("password", event.currentTarget.value);
-            }}
-            error={
-              form.errors.password &&
-              "Password should include at least 6 characters"
-            }
-            radius="xs"
-          />
+          <Stack>
+            <PasswordInput
+              required
+              label="Password"
+              placeholder="Your password"
+              value={form.values.password}
+              type="password"
+              onChange={(event) => {
+                form.setFieldValue("password", event.currentTarget.value);
+              }}
+              error={
+                form.errors.password &&
+                "Password should include at least 6 characters"
+              }
+              radius="xs"
+            />
+            <Group justify="space-between" align="center">
+              <Checkbox size="sm" id="remember" label="Remember me" />
+              <Anchor
+                component={Link}
+                href="/forgot-password"
+                size="sm"
+                fw={500}
+              >
+                Forgot password?
+              </Anchor>
+            </Group>
+          </Stack>
         </Stack>
 
         <Stack mt={"xl"} align="stretch">
