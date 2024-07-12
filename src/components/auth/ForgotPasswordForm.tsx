@@ -113,7 +113,7 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
 
         <Stack mt={"xl"} align="stretch">
           <Button type="submit" loading={loading} radius="xs">
-            {!loading ? "Reset Password" : "Sending..."}
+            {!loading ? "Send password reset link" : "Sending..."}
           </Button>
           <Group gap={3} align="stretch" justify="center">
             <Text size="sm">Remember your password?</Text>
