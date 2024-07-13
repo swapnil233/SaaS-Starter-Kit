@@ -29,9 +29,10 @@ export interface IDashboardLayout {
 }
 
 const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] =
+    useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-  const [newNotifications, setNewNotifications] = useState(false);
+  const [newNotifications] = useState(false);
   const session = useSession();
 
   return (
@@ -79,16 +80,19 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
                   href="/dashboard"
                   icon={<IconHome size={20} />}
                   label="Home"
+                  closeMobileNav={closeMobile}
                 />
                 <NavButton
                   href="/inbox"
                   icon={<IconInbox size={20} />}
                   label="Inbox"
+                  closeMobileNav={closeMobile}
                 />
                 <NavButton
                   href="/reports"
                   icon={<IconChartBar size={20} />}
                   label="Reports"
+                  closeMobileNav={closeMobile}
                 />
               </Stack>
 
@@ -100,11 +104,13 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
                   href="/documents"
                   icon={<IconFile size={20} />}
                   label="Documents"
+                  closeMobileNav={closeMobile}
                 />
                 <NavButton
                   href="/automations"
                   icon={<IconBolt size={20} />}
                   label="Automations"
+                  closeMobileNav={closeMobile}
                 />
               </Stack>
 
@@ -116,11 +122,13 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
                   href="/dashboard/account"
                   icon={<IconUser size={20} />}
                   label="Account"
+                  closeMobileNav={closeMobile}
                 />
                 <NavButton
                   href="/dashboard/plans"
                   icon={<IconBuildingBank size={20} />}
                   label="Pricing plans"
+                  closeMobileNav={closeMobile}
                 />
               </Stack>
             </Stack>
@@ -129,6 +137,7 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
                 href="/invite"
                 icon={<IconUserPlus size={20} />}
                 label="Invite people"
+                closeMobileNav={closeMobile}
               />
             </div>
           </Stack>
