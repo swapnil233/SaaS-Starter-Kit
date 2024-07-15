@@ -1,9 +1,17 @@
-import { Menu, MenuDivider, rem } from "@mantine/core";
+import { Avatar, Menu, MenuDivider, rem, Stack, Text } from "@mantine/core";
+import {
+  IconGift,
+  IconLogout,
+  IconPuzzle,
+  IconReport,
+  IconUser,
+  IconUsersGroup,
+  IconUsersPlus,
+} from "@tabler/icons-react";
+import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { FC } from "react";
 import UserButton from "./UserButton";
-import { IconLogout, IconUser } from "@tabler/icons-react";
-import Link from "next/link";
-import { signOut } from "next-auth/react";
 
 interface IUserNavMenu {
   image: string;
@@ -11,34 +19,124 @@ interface IUserNavMenu {
 
 const UserNavMenu: FC<IUserNavMenu> = ({ image }) => {
   return (
-    <Menu withArrow>
+    <Menu>
       <Menu.Target>
         <UserButton image={image} />
       </Menu.Target>
 
-      <Menu.Dropdown>
-        <Menu.Item
-          leftSection={<IconUser style={{ width: rem(14), height: rem(14) }} />}
-          component={Link}
-          href={"/dashboard/account"}
+      <Menu.Dropdown
+        p={0}
+        maw="calc(100vw - 10px)"
+        w={300}
+        style={{
+          boxShadow:
+            "rgba(0, 0, 0, 0.1) 0px 1px 3px, rgba(0, 0, 0, 0.06) 0px 4px 8px",
+          border: "1px solid rgb(194, 197, 205)",
+          boxSizing: "border-box",
+        }}
+      >
+        <Stack
+          py="md"
+          px="xl"
+          bg="#f6f8fc"
+          style={{
+            borderBottom: "1px solid var(--mantine-colors-gray-3)",
+          }}
+          justify="center"
+          align="center"
         >
-          Account
-        </Menu.Item>
-        <MenuDivider />
-        <Menu.Item
-          onClick={() =>
-            signOut({
-              redirect: true,
-              callbackUrl: "/",
-            })
-          }
-          color="red"
-          leftSection={
-            <IconLogout style={{ width: rem(14), height: rem(14) }} />
-          }
-        >
-          Log out
-        </Menu.Item>
+          <Avatar
+            src={image}
+            alt="User avatar"
+            w={60}
+            h={60}
+            className="rounded-full"
+          />
+          <Stack gap="2">
+            <Text ta="center" fw="bold">
+              Hasan Iqbal
+            </Text>
+            <Text ta="center" size="xs" c="dimmed">
+              swapniliqbal@gmail.com
+            </Text>
+          </Stack>
+        </Stack>
+        <Stack py="sm" gap={"xs"}>
+          <Menu.Item
+            leftSection={
+              <IconUser style={{ width: rem(16), height: rem(16) }} />
+            }
+            component={Link}
+            href={"/dashboard/account"}
+          >
+            Account
+          </Menu.Item>
+          <Menu.Item
+            leftSection={
+              <IconUsersGroup style={{ width: rem(16), height: rem(16) }} />
+            }
+            component={Link}
+            href={"/organizations"}
+          >
+            Organizations
+          </Menu.Item>
+          <Menu.Item
+            leftSection={
+              <IconPuzzle style={{ width: rem(16), height: rem(16) }} />
+            }
+            component={Link}
+            href={"/settings/integrations"}
+          >
+            Integrations
+          </Menu.Item>
+          <Menu.Item
+            leftSection={
+              <IconReport style={{ width: rem(16), height: rem(16) }} />
+            }
+            component={Link}
+            href={"/settings/subscriptions"}
+          >
+            Billing
+          </Menu.Item>
+        </Stack>
+        <MenuDivider m={0} p={0} />
+        <Stack py="sm" gap={"xs"}>
+          <Menu.Item
+            leftSection={
+              <IconUsersPlus style={{ width: rem(16), height: rem(16) }} />
+            }
+            component={Link}
+            href={"/team/invite"}
+          >
+            Invite members
+          </Menu.Item>
+          <Menu.Item
+            leftSection={
+              <IconGift style={{ width: rem(16), height: rem(16) }} />
+            }
+            component={Link}
+            href={"/account/referrals"}
+          >
+            Refer and earn
+          </Menu.Item>
+        </Stack>
+        <MenuDivider m={0} p={0} />
+        <Stack py="sm" m={0} gap={"xs"}>
+          <Menu.Item
+            onClick={() =>
+              signOut({
+                redirect: true,
+                callbackUrl: "/",
+              })
+            }
+            color="red"
+            leftSection={
+              <IconLogout style={{ width: rem(16), height: rem(16) }} />
+            }
+          >
+            Sign out
+          </Menu.Item>
+        </Stack>
       </Menu.Dropdown>
     </Menu>
   );
