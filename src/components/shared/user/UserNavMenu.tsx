@@ -15,9 +15,11 @@ import UserButton from "./UserButton";
 
 interface IUserNavMenu {
   image: string;
+  name: string;
+  email: string;
 }
 
-const UserNavMenu: FC<IUserNavMenu> = ({ image }) => {
+const UserNavMenu: FC<IUserNavMenu> = ({ image, name, email }) => {
   return (
     <Menu>
       <Menu.Target>
@@ -54,10 +56,10 @@ const UserNavMenu: FC<IUserNavMenu> = ({ image }) => {
           />
           <Stack gap="2">
             <Text ta="center" fw="bold">
-              Hasan Iqbal
+              {name}
             </Text>
             <Text ta="center" size="xs" c="dimmed">
-              swapniliqbal@gmail.com
+              {email}
             </Text>
           </Stack>
         </Stack>

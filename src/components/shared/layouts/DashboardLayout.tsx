@@ -67,7 +67,11 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
               visibleFrom="sm"
             />
             <NotificationsButton newNotifications={newNotifications} />
-            <UserNavMenu image={session.data?.user.image || ""} />
+            <UserNavMenu
+              name={session.data?.user.name || "Loading..."}
+              email={session.data?.user.email || "Loading..."}
+              image={session.data?.user.image || ""}
+            />
           </Group>
         </Group>
       </AppShell.Header>
