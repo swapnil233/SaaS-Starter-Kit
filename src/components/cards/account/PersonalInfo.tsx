@@ -59,8 +59,7 @@ const PersonalInfo = ({ user, preferences }: PersonalInfoProps) => {
             Personal information
           </Text>
           <Text c="#7D7D7D">
-            This information will be viewable by other users of this
-            application.
+            This information may be viewable by other users of this application.
           </Text>
         </Stack>
       </Grid.Col>

@@ -46,7 +46,7 @@ const ChangePassword = ({ account }: ChangePasswordProps) => {
                   <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
                     <Text>
                       You can’t change your password because your account is
-                      authenticated with{" "}
+                      verified with{" "}
                       {account.provider.charAt(0).toUpperCase() +
                         account.provider.slice(1)}
                       .
