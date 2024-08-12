@@ -1,3 +1,4 @@
+import ProBanner from "@/components/billing/pro-banner";
 import NavButton from "@/components/buttons/NavButton";
 import app from "@/lib/app";
 import {
@@ -39,10 +40,15 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const [newNotifications] = useState(false);
   const session = useSession();
+  const [showProBanner, setShowProBanner] = useState<boolean | null>(true);
 
   const handleCollapseClick = () => {
     toggleDesktop();
     closeMobile();
+
+    if (showProBanner) {
+      setShowProBanner(false);
+    }
   };
 
   return (
@@ -165,19 +171,22 @@ const DashboardLayout: FC<IDashboardLayout> = ({ children }) => {
           </Stack>
         </AppShell.Section>
         <AppShell.Section px="md" py={"xs"} visibleFrom="sm">
-          <NavButton
-            href="#"
-            icon={
-              desktopOpened ? (
-                <IconLayoutSidebarLeftCollapse size={20} />
-              ) : (
-                <IconLayoutSidebarLeftExpand size={20} />
-              )
-            }
-            label="Collapse"
-            isCollapsed={!desktopOpened}
-            closeMobileNav={handleCollapseClick}
-          />
+          <Stack>
+            {showProBanner && <ProBanner setShowProBanner={setShowProBanner} />}
+            <NavButton
+              href="#"
+              icon={
+                desktopOpened ? (
+                  <IconLayoutSidebarLeftCollapse size={20} />
+                ) : (
+                  <IconLayoutSidebarLeftExpand size={20} />
+                )
+              }
+              label="Collapse"
+              isCollapsed={!desktopOpened}
+              closeMobileNav={handleCollapseClick}
+            />
+          </Stack>
         </AppShell.Section>
       </AppShell.Navbar>
       <AppShell.Main bg="#f7fafd">{children}</AppShell.Main>
