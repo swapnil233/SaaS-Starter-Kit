@@ -1,12 +1,9 @@
 import { sendVerificationEmail } from "@/services/email.service";
-import { deleteVerificationToken, getUser } from "@/services/user.service";
+import { getUser } from "@/services/user.service";
 import {
-  createNewVerificationToken,
-  getVerificationToken,
+  createNewVerificationToken
 } from "@/services/verification.service";
 import { NextApiRequest, NextApiResponse } from "next";
-
-const COOLDOWN_PERIOD_MS = 5 * 60 * 1000; // 5 minutes
 
 export default async function handler(
   req: NextApiRequest,
@@ -28,24 +25,6 @@ export default async function handler(
         return res
           .status(400)
           .json({ message: "Your email is already verified." });
-      }
-
-      const existingToken = await getVerificationToken({ email });
-      const now = new Date();
-
-      if (existingToken) {
-        const timeSinceLastSent =
-          now.getTime() - new Date(existingToken.lastSent).getTime();
-
-        if (timeSinceLastSent < COOLDOWN_PERIOD_MS) {
-          return res.status(429).json({
-            message: `Please wait ${Math.ceil(
-              (COOLDOWN_PERIOD_MS - timeSinceLastSent) / 1000 / 60
-            )} minutes before requesting another verification email.`,
-          });
-        }
-
-        await deleteVerificationToken(existingToken.id);
       }
 
       const { token } = await createNewVerificationToken(user.email);
