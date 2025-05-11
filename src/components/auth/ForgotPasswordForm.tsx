@@ -1,3 +1,8 @@
+import {
+  RecaptchaField,
+  RecaptchaRefHandle,
+} from "@/components/auth/RecaptchaField";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 import app from "@/lib/app";
 import {
   Anchor,
@@ -13,56 +18,69 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 
 interface IForgotPasswordFormProps {}
 
 const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+  const [formSubmitted, setFormSubmitted] = useState(false); // Prevents spamming
+  const { isVerified, recaptchaToken, handleVerify } = useRecaptcha();
+  const recaptchaRef = useRef<RecaptchaRefHandle>(null);
 
   const form = useForm({
-    initialValues: {
-      email: "",
-    },
+    initialValues: { email: "" },
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
     },
   });
 
+  const resetRecaptcha = () => {
+    // Reset the reCAPTCHA widget, which also sets isVerified to false internally
+    recaptchaRef.current?.reset();
+  };
+
   const handleSubmit = async (values: typeof form.values) => {
-    if (loading) return;
+    if (loading || formSubmitted || !isVerified || !recaptchaToken) return;
 
     setLoading(true);
 
-    const result = await fetch("/api/auth/request-password-reset", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: values.email }),
-    });
-
-    const data = await result.json();
-
-    if (result.ok) {
-      notifications.show({
-        title: "Password Reset Sent",
-        message: "Please check your email for further instructions.",
-        color: "green",
+    try {
+      const result = await fetch("/api/auth/request-password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: values.email, recaptchaToken }),
       });
-      router.push("/signin");
-    } else {
+
+      const data = await result.json();
+
+      if (result.ok) {
+        notifications.show({
+          title: "Success",
+          message: data.message || "Password reset email sent.",
+          color: "green",
+        });
+        setFormSubmitted(true); // Disable button after successful submission
+      } else {
+        notifications.show({
+          title: "Error",
+          message:
+            data.error ||
+            "An error occurred while resetting your password. Please try again later.",
+          color: "red",
+        });
+        resetRecaptcha(); // Reset reCAPTCHA on error
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
       notifications.show({
-        title: "Could not reset password",
+        title: "Unexpected Error",
         message:
-          data.error ||
-          "An error occurred while resetting your password. We are working to resolve this issue.",
+          "Something went wrong. Please check your connection or try again later.",
         color: "red",
-        withCloseButton: false,
       });
+      resetRecaptcha(); // Reset reCAPTCHA on error
     }
 
     setLoading(false);
@@ -71,23 +89,17 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
   return (
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
       <Stack justify="stretch" gap="xs" mb="md" align="center">
-        {app.logoUrl && (
-          <Link href="/">
-            <Image
-              src={app.logoUrl}
-              alt={app.logoUrlAlt}
-              height={60}
-              width={60}
-            />
-          </Link>
-        )}
+        <Link href="/">
+          <Image
+            src={app.logoUrl}
+            alt={app.logoUrlAlt}
+            height={60}
+            width={60}
+          />
+        </Link>
+
         <Stack align="center" mt={"md"} gap={4}>
-          <Title
-            order={3}
-            style={{
-              textAlign: "center",
-            }}
-          >
+          <Title order={3} style={{ textAlign: "center" }}>
             Forgot your password?
           </Title>
           <Text>Enter your email to reset your password.</Text>
@@ -96,31 +108,40 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
 
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
-          <TextInput
-            required
-            label="Email"
-            type="email"
-            autoComplete="email"
-            placeholder="john.doe@work.com"
-            value={form.values.email}
-            onChange={(event) =>
-              form.setFieldValue("email", event.currentTarget.value)
-            }
-            error={form.errors.email && "Invalid email"}
-            radius="xs"
-          />
-        </Stack>
+          <Stack>
+            <TextInput
+              required
+              label="Email"
+              type="email"
+              autoComplete="email"
+              placeholder="john.doe@work.com"
+              value={form.values.email}
+              onChange={(event) =>
+                form.setFieldValue("email", event.currentTarget.value)
+              }
+              error={form.errors.email && "Invalid email"}
+              radius="xs"
+            />
+          </Stack>
 
-        <Stack mt={"xl"} align="stretch">
-          <Button type="submit" loading={loading} radius="xs">
-            {!loading ? "Send password reset link" : "Sending..."}
-          </Button>
-          <Group gap={3} align="stretch" justify="center">
-            <Text size="sm">Remember your password?</Text>
-            <Anchor component={Link} href="/signin" size="sm" fw={500}>
-              Sign in
-            </Anchor>
-          </Group>
+          <RecaptchaField ref={recaptchaRef} onChange={handleVerify} />
+
+          <Stack align="stretch">
+            <Button
+              type="submit"
+              loading={loading}
+              radius="xs"
+              disabled={formSubmitted || !isVerified} // Disable button if form is already submitted or reCAPTCHA not verified
+            >
+              {loading ? "Sending..." : "Send password reset link"}
+            </Button>
+            <Group gap={3} align="stretch" justify="center">
+              <Text size="sm">Remember your password?</Text>
+              <Anchor component={Link} href="/signin" size="sm" fw={500}>
+                Sign in
+              </Anchor>
+            </Group>
+          </Stack>
         </Stack>
       </form>
     </Paper>

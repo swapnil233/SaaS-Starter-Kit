@@ -1,4 +1,5 @@
-import { updateUser, updateUserPreferences } from "@/services/user.service";
+import { withAuth } from "@/lib/auth/withAuth";
+import { updateUserPreferences } from "@/services/user.service";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
@@ -9,7 +10,6 @@ const ContactTimePreferenceEnum = z.enum(["MORNING", "AFTERNOON", "EVENING"]);
 // Define the schema for input validation using zod
 const updateUserPreferencesSchema = z.object({
   id: z.string().cuid(),
-  preferredName: z.string().optional(),
   emailNotifications: z.boolean().optional(),
   smsNotifications: z.boolean().optional(),
   pushNotifications: z.boolean().optional(),
@@ -19,7 +19,7 @@ const updateUserPreferencesSchema = z.object({
   newsletterSubscribed: z.boolean().optional(),
 });
 
-export default async function handler(
+export default withAuth(async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
@@ -31,16 +31,12 @@ export default async function handler(
 
   try {
     // Parse and validate the request body
-    const { id, preferredName, ...preferencesData } =
-      updateUserPreferencesSchema.parse(req.body);
+    const { id, ...preferencesData } = updateUserPreferencesSchema.parse(
+      req.body
+    );
 
     // Update the user preferences in the database
     const updatedPreferences = await updateUserPreferences(id, preferencesData);
-
-    // If preferredName is provided, update the user table
-    if (preferredName !== undefined) {
-      await updateUser(id, { preferredName });
-    }
 
     // Return the updated user preferences data
     return res.status(200).json(updatedPreferences);
@@ -62,4 +58,4 @@ export default async function handler(
     // Generic errors
     return res.status(500).json({ error: "Failed to update user preferences" });
   }
-}
+});

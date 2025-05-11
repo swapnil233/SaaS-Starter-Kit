@@ -11,23 +11,16 @@ const ExpiredPasswordResetLink: React.FC<
   return (
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
       <Stack justify="stretch" gap="xs" mb="md" align="center">
-        {app.logoUrl && (
-          <Link href="/">
-            <Image
-              src={app.logoUrl}
-              alt={app.logoUrlAlt}
-              height={60}
-              width={60}
-            />
-          </Link>
-        )}
+        <Link href="/">
+          <Image
+            src={app.logoUrl}
+            alt={app.logoUrlAlt}
+            height={60}
+            width={60}
+          />
+        </Link>
         <Stack align="center" mt={"md"} gap={4}>
-          <Title
-            order={3}
-            style={{
-              textAlign: "center",
-            }}
-          >
+          <Title order={3} style={{ textAlign: "center" }}>
             This link is invalid or expired
           </Title>
           <Text>Please login to continue.</Text>

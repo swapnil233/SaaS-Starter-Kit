@@ -1,4 +1,6 @@
-version: "3.8"
+# If the docker compose doesn't work because of the version, you can use the following command to run the container
+# docker compose down -v
+# docker compose up -d
 
 services:
   postgres:
@@ -13,5 +15,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:alpine
+    container_name: boilerplate-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
 volumes:
   postgres_data:
+  redis_data:

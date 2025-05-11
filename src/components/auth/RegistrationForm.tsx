@@ -1,5 +1,9 @@
-import useRegistrationForm from "@/hooks/useRegistrationForm";
-import app from "@/lib/app";
+import {
+  RecaptchaField,
+  RecaptchaRefHandle,
+} from "@/components/auth/RecaptchaField";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
+import { useRegistrationForm } from "@/hooks/useRegistrationForm";
 import isPasswordValid from "@/lib/auth/isPasswordValid";
 import {
   Anchor,
@@ -8,23 +12,27 @@ import {
   Group,
   Paper,
   PasswordInput,
+  Skeleton,
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import { Provider } from "next-auth/providers/index";
 import { signIn } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
+import { useRef } from "react";
 import { GoogleIcon } from "../icons/GoogleIcon";
 import { PasswordStrength } from "./PasswordStrength";
 
 interface IRegistrationFormProps {
-  providers: Provider[];
+  providers: Provider[] | null;
+  providersLoading: boolean;
 }
 
-const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
+const RegistrationForm: React.FC<IRegistrationFormProps> = ({
+  providers,
+  providersLoading,
+}) => {
   const {
     register,
     handleSubmit,
@@ -33,53 +41,66 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
     isLoading,
     watch,
     setValue,
+    setRecaptchaToken,
+    isSuccess,
+    isError,
   } = useRegistrationForm();
 
+  const { isVerified, handleVerify } = useRecaptcha();
+  const recaptchaRef = useRef<RecaptchaRefHandle>(null);
   const password = watch("password");
+
+  const resetRecaptcha = () => {
+    // Reset the reCAPTCHA widget, which also sets isVerified to false internally
+    recaptchaRef.current?.reset();
+  };
+
+  const handleRecaptchaChange = (token: string | null) => {
+    handleVerify(token);
+    if (token) {
+      setRecaptchaToken(token);
+    }
+  };
+
+  const handleFormSubmit = async (data: any) => {
+    const result = await onSubmit(data);
+
+    // Reset reCAPTCHA if successful or if there was an error
+    if (isSuccess || isError) {
+      resetRecaptcha();
+    }
+
+    return result;
+  };
 
   return (
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
-      <Stack justify="stretch" gap="xs" mb="md" align="center">
-        {app.logoUrl && (
-          <Link href="/">
-            <Image
-              src={app.logoUrl}
-              alt={app.logoUrlAlt}
-              height={60}
-              width={60}
-            />
-          </Link>
-        )}
-        <Stack align="center" mt={"md"} gap={4}>
-          <Title
-            order={3}
-            style={{
-              textAlign: "center",
-            }}
-          >
-            Let&apos;s get started with {app.name}!
-          </Title>
-          <Text>No credit card details required.</Text>
-        </Stack>
-      </Stack>
-      <Stack>
-        {Object.values(providers).map(
-          (provider) =>
-            provider.name !== "Credentials" && (
-              <Button
-                key={provider.name}
-                leftSection={provider.name === "Google" ? <GoogleIcon /> : null}
-                variant="default"
-                onClick={() => signIn(provider.id)}
-                fullWidth
-                fw={400}
-                radius={"xs"}
-              >
-                Register with {provider.name}
-              </Button>
-            )
-        )}
-      </Stack>
+      {providersLoading ? (
+        <Skeleton height={36} w={"100%"} radius="xs" />
+      ) : (
+        providers && (
+          <Stack>
+            {Object.values(providers).map(
+              (provider) =>
+                provider.name !== "Credentials" && (
+                  <Button
+                    key={provider.name}
+                    leftSection={
+                      provider.name === "Google" ? <GoogleIcon /> : null
+                    }
+                    variant="default"
+                    onClick={() => signIn(provider.id)}
+                    fullWidth
+                    fw={400}
+                    radius={"xs"}
+                  >
+                    Register with {provider.name}
+                  </Button>
+                )
+            )}
+          </Stack>
+        )
+      )}
 
       <Divider
         label="Or register with email and password"
@@ -87,7 +108,7 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
         my="lg"
       />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
         <Stack>
           <TextInput
             label="Name"
@@ -98,6 +119,7 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
             {...register("name")}
             error={errors.name?.message}
             radius="xs"
+            description="Your team members will see this name."
           />
 
           <TextInput
@@ -124,6 +146,8 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
           />
 
           <PasswordStrength value={password || ""} />
+
+          <RecaptchaField ref={recaptchaRef} onChange={handleRecaptchaChange} />
         </Stack>
 
         <Stack mt={"xl"} align="stretch">
@@ -131,7 +155,7 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({ providers }) => {
             type="submit"
             loading={isLoading}
             radius="xs"
-            disabled={!isPasswordValid(watch("password"))}
+            disabled={!isPasswordValid(watch("password")) || !isVerified}
           >
             {!isLoading ? "Get started" : "Registering..."}
           </Button>

@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { useRouter } from "next/router";
+import router from "next/router";
 import { FC, useEffect, useState } from "react";
 
 interface IResetPasswordFormProps {
@@ -21,13 +21,9 @@ const ResetPasswordForm: FC<IResetPasswordFormProps> = ({ token }) => {
   const [loading, setLoading] = useState(false);
   const [isPasswordValidState, setIsPasswordValidState] = useState(false);
   const [doPasswordsMatch, setDoPasswordsMatch] = useState(false);
-  const router = useRouter();
 
   const form = useForm({
-    initialValues: {
-      password: "",
-      confirmPassword: "",
-    },
+    initialValues: { password: "", confirmPassword: "" },
 
     validate: {
       password: (val) =>
@@ -49,26 +45,31 @@ const ResetPasswordForm: FC<IResetPasswordFormProps> = ({ token }) => {
 
     setLoading(true);
 
-    const result = await fetch("/api/auth/reset-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token, password: values.password }),
-    });
-
-    if (result.ok) {
-      notifications.show({
-        title: "Your password has been reset",
-        message: "You can now log in with your new password.",
-        color: "green",
+    try {
+      const result = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, password: values.password }),
       });
-      router.push("/signin");
-    } else {
+
+      const data = await result.json();
+
+      if (result.ok) {
+        router.push("/signin");
+      } else {
+        notifications.show({
+          title: "Error Resetting Password",
+          message:
+            data.error || "An unexpected error occurred. Please try again.",
+          color: "red",
+        });
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
       notifications.show({
-        title: "Error",
+        title: "Unexpected Error",
         message:
-          "There was an error resetting your password. Please try again.",
+          "An error occurred while resetting your password. Please try again later.",
         color: "red",
       });
     }
@@ -80,12 +81,7 @@ const ResetPasswordForm: FC<IResetPasswordFormProps> = ({ token }) => {
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
       <Stack justify="stretch" gap="xs" mb="md" align="center">
         <Stack align="center" mt={"md"} gap={4}>
-          <Title
-            order={3}
-            style={{
-              textAlign: "center",
-            }}
-          >
+          <Title order={3} style={{ textAlign: "center" }}>
             Reset Your Password
           </Title>
           <Text>Enter your new password below.</Text>
@@ -133,7 +129,7 @@ const ResetPasswordForm: FC<IResetPasswordFormProps> = ({ token }) => {
             type="submit"
             loading={loading}
             radius="xs"
-            disabled={!isPasswordValidState || !doPasswordsMatch}
+            disabled={!isPasswordValidState || !doPasswordsMatch || loading}
           >
             {!loading ? "Reset Password" : "Resetting..."}
           </Button>

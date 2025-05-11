@@ -1,5 +1,3 @@
-import app from "@/lib/app";
-import { host } from "@/lib/host";
 import {
   Body,
   Button,
@@ -11,35 +9,34 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
 
 interface WelcomeEmailProps {
   name: string;
   subject: string;
 }
 
-export const WelcomeEmail = ({ name, subject }: WelcomeEmailProps) => (
+export const WelcomeEmail = ({
+  name = "User",
+  subject = "Welcome to QualSearch",
+}: WelcomeEmailProps) => (
   <Html>
     <Head />
     <Preview>{subject}</Preview>
-    <Preview>
-      Welcome to {app.name}, the best business in the entire multiverse.
-    </Preview>
     <Body style={main}>
       <Container style={container}>
         <Text style={paragraph}>Hi {name},</Text>
         <Text style={paragraph}>
-          Welcome to {app.name}, the best business in the entire multiverse.
+          Welcome to QualSearch, the best business in the entire multiverse.
         </Text>
         <Section style={btnContainer}>
-          <Button style={button} href={`${host}/signin`}>
+          <Button style={button} href="https://qualsearch.io/signin">
             Get started
           </Button>
         </Section>
         <Text style={paragraph}>
           Best,
           <br />
-          The {app.name} team
+          The QualSearch team
         </Text>
         <Hr style={hr} />
         <Text style={footer}>123 Elmo Street, Toronto, ON A1A A1A Canada</Text>
@@ -50,7 +47,7 @@ export const WelcomeEmail = ({ name, subject }: WelcomeEmailProps) => (
 
 WelcomeEmail.PreviewProps = {
   name: "Hasan Iqbal",
-  subject: `Welcome to ${app.name}`,
+  subject: "Welcome to QualSearch",
 } as WelcomeEmailProps;
 
 export default WelcomeEmail;

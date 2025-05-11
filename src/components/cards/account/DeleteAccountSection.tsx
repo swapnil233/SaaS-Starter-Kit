@@ -1,24 +1,29 @@
-// In DeleteAccount.tsx
 import DeleteAccountModal from "@/components/modals/DeleteAccountModal";
 import { Card, Grid, Group, Stack, Text } from "@mantine/core";
+import { Account } from "@prisma/client";
 
 interface DeleteAccountSectionProps {
-  handleDeleteAccount: () => void;
+  handleDeleteAccount: (_data: {
+    password?: string;
+    confirmText?: string;
+  }) => Promise<void>;
   isLoading: boolean;
+  account: Account;
 }
 
 const DeleteAccountSection = ({
   handleDeleteAccount,
   isLoading,
+  account,
 }: DeleteAccountSectionProps) => {
   return (
     <Grid gutter="xl">
       <Grid.Col span={{ base: 12, md: 4 }}>
         <Stack gap="xs">
-          <Text fw={500} size="lg" c="#333333">
+          <Text fw={500} size="lg">
             Delete account
           </Text>
-          <Text c="#7D7D7D">Deleting your account is irreversible.</Text>
+          <Text c="dimmed">Deleting your account is irreversible.</Text>
         </Stack>
       </Grid.Col>
       <Grid.Col span={{ base: 12, md: 8 }}>
@@ -27,6 +32,7 @@ const DeleteAccountSection = ({
             <DeleteAccountModal
               onConfirm={handleDeleteAccount}
               isLoading={isLoading}
+              accountType={account.type}
             />
           </Group>
         </Card>

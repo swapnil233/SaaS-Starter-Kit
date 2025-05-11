@@ -1,5 +1,3 @@
-import app from "@/lib/app";
-import { host } from "@/lib/host";
 import {
   Body,
   Button,
@@ -20,19 +18,18 @@ interface VerificationEmailProps {
 }
 
 export const VerificationEmail = ({
-  name,
-  subject,
-  verificationLink,
+  name = "User",
+  subject = "Verify your email for QualSearch",
+  verificationLink = "https://qualsearch.io/verify-email?token=xyz",
 }: VerificationEmailProps) => (
   <Html>
     <Head />
     <Preview>{subject}</Preview>
-    <Preview>Verify your email to get started with {app.name}.</Preview>
     <Body style={main}>
       <Container style={container}>
         <Text style={paragraph}>Hi {name},</Text>
         <Text style={paragraph}>
-          Thank you for signing up for {app.name}. Please verify your email
+          Thank you for signing up for QualSearch. Please verify your email
           address by clicking the button below.
         </Text>
         <Section style={btnContainer}>
@@ -45,7 +42,7 @@ export const VerificationEmail = ({
         <Text style={paragraph}>
           Best,
           <br />
-          The {app.name} team
+          The QualSearch team
         </Text>
         <Hr style={hr} />
         <Text style={footer}>123 Elmo Street, Toronto, ON A1A A1A Canada</Text>
@@ -56,8 +53,8 @@ export const VerificationEmail = ({
 
 VerificationEmail.PreviewProps = {
   name: "Hasan Iqbal",
-  subject: `Verify your email for ${app.name}`,
-  verificationLink: `${host}/verify-email?token=abc123`,
+  subject: "Verify your email for QualSearch",
+  verificationLink: "https://qualsearch.io/verify-email?token=abc123",
 } as VerificationEmailProps;
 
 export default VerificationEmail;

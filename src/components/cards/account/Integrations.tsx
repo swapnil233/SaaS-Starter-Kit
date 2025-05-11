@@ -6,10 +6,10 @@ const Integrations = () => {
     <Grid gutter="xl">
       <Grid.Col span={{ base: 12, md: 4 }}>
         <Stack gap="xs">
-          <Text fw={500} size="lg" c="#333333">
+          <Text fw={500} size="lg">
             Integrations
           </Text>
-          <Text c="#7D7D7D">
+          <Text c="dimmed">
             Easily set up integrations with just a few clicks.
           </Text>
         </Stack>
@@ -20,7 +20,7 @@ const Integrations = () => {
             <Group wrap="nowrap">
               <Group wrap="nowrap" mr="auto">
                 <Image
-                  src="/gc.svg"
+                  src="https://qualsearch-public.s3.us-east-1.amazonaws.com/public/gc.svg"
                   width={42}
                   height={42}
                   alt="Google Calendar logo"
@@ -34,14 +34,14 @@ const Integrations = () => {
                 </Stack>
               </Group>
               <Group justify="flex-end">
-                <Button>Connect</Button>
+                <Button disabled>Coming soon</Button>
               </Group>
             </Group>
 
             <Group wrap="nowrap">
               <Group wrap="nowrap" mr="auto">
                 <Image
-                  src="/msft.svg"
+                  src="https://qualsearch-public.s3.us-east-1.amazonaws.com/public/msft.svg"
                   width={42}
                   height={42}
                   alt="Microsoft logo"
@@ -55,13 +55,18 @@ const Integrations = () => {
                 </Stack>
               </Group>
               <Group justify="flex-end">
-                <Button>Connect</Button>
+                <Button disabled>Coming soon</Button>
               </Group>
             </Group>
 
             <Group wrap="nowrap">
               <Group wrap="nowrap" mr="auto">
-                <Image src="/zoom.png" width={42} height={42} alt="Zoom logo" />
+                <Image
+                  src="https://qualsearch-public.s3.us-east-1.amazonaws.com/public/zoom.png"
+                  width={42}
+                  height={42}
+                  alt="Zoom logo"
+                />
                 <Stack gap={4}>
                   <Title order={4}>Zoom</Title>
                   <Text>
@@ -71,7 +76,7 @@ const Integrations = () => {
                 </Stack>
               </Group>
               <Group justify="flex-end">
-                <Button>Connect</Button>
+                <Button disabled>Coming soon</Button>
               </Group>
             </Group>
           </Stack>
