@@ -2,25 +2,58 @@ import SharedHead from "@/components/shared/SharedHead";
 import app from "@/lib/app";
 import { auth } from "@/lib/auth/auth";
 import { host } from "@/lib/host";
+import prisma from "@/lib/prisma";
 import { sendWelcomeEmail } from "@/services/email.service";
 import {
   deleteVerificationToken,
   getUser,
   updateVerificationTokenAndEmail,
 } from "@/services/user.service";
-import { getVerificationToken } from "@/services/verification.service";
-import { Button, Card, Group, Stack, Text, Title } from "@mantine/core";
+import {
+  getVerificationToken,
+  verifyToken,
+} from "@/services/verification.service";
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title,
+} from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
+import { IconAlertCircle, IconCheck, IconMailFast } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 
+/*
+  1. Authenticates the user session using the request and response objects.
+  2. Checks if the user is authenticated and has an email. If not, it redirects
+     the user to the sign-in page with a callback URL.
+  3. Redirects the user to the teams page if their email is already verified.
+  4. Checks for a verification token in the query parameters. If absent, it fetches
+     a pending verification token for the user's email and returns a message prompting
+     the user to check their email or send a new verification email.
+  5. Validates the provided token by comparing it against active tokens in the database.
+     If the token is invalid or expired, it throws an error.
+  6. Retrieves the user associated with the token's email. If the user does not exist,
+     it throws an error.
+  7. Updates the user's email verification status and sends a welcome email.
+  8. Deletes the used verification token from the database.
+  9. Returns props indicating the success of the email verification process and a
+     corresponding message.
+*/
+
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context.req, context.res);
   const token = context.query.token as string;
 
-  // Check if the user is authenticated and has an email
   if (!session || !session.user.email) {
     const redirectUrl = new URL(`${host}/signin`);
     redirectUrl.searchParams.set(
@@ -36,7 +69,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  // Redirect if the user is already verified.
   if (session.user.emailVerified) {
     return {
       redirect: {
@@ -46,7 +78,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  // Check for a verification token in the query parameters
   if (!token) {
     const pendingToken = await getVerificationToken({
       email: session.user.email,
@@ -60,41 +91,50 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   }
 
-  // Handle the token validation and email verification process
   try {
-    const existingToken = await getVerificationToken({ token });
+    // Fetch active tokens that haven't expired
+    const activeTokens = await prisma.verificationToken.findMany({
+      where: {
+        expires: {
+          gt: new Date(), // Only consider tokens that are still valid
+        },
+      },
+    });
 
-    // Non-existent token
-    if (!existingToken) {
+    let validToken = null;
+    // Check each token to find a valid one
+    for (const storedToken of activeTokens) {
+      if (await verifyToken(token, storedToken)) {
+        validToken = storedToken; // Found a valid token
+        break;
+      }
+    }
+
+    if (!validToken) {
+      // No valid token found
       throw new Error(
-        "The email address or the token you are trying to verify does not exist."
+        "The verification link is invalid or has expired. Please request a new verification email."
       );
     }
 
-    // Expired token
-    const tokenHasExpired = new Date(existingToken.expires) < new Date();
-    if (tokenHasExpired) {
-      throw new Error("This link has expired.");
-    }
-
-    // User's email has changed
-    const tokenUser = await getUser({ email: existingToken.email });
+    // Retrieve user associated with the valid token
+    const tokenUser = await getUser({ email: validToken.email });
     if (!tokenUser) {
-      throw new Error("User doesn't exist");
+      throw new Error("User doesn't exist"); // User not found
     }
 
-    // Verify email and update user information
+    // Update user's email verification status
     await updateVerificationTokenAndEmail(
       tokenUser.id,
-      new Date(),
-      existingToken.email
+      new Date(), // Set current date as verification date
+      validToken.email
     );
 
-    // Send user a welcome email
+    // Send a welcome email to the user
     await sendWelcomeEmail(tokenUser.name || "User", tokenUser.email);
 
-    // Delete the token
-    await deleteVerificationToken(existingToken.id);
+    // Remove the used verification token
+    await deleteVerificationToken(validToken.id);
 
     return {
       props: {
@@ -104,6 +144,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
   } catch (error) {
+    // Handle errors and return failure message
     return {
       props: {
         success: false,
@@ -125,22 +166,25 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
   const session = useSession();
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState<number | null>(null);
+  const [initialCooldownCheckDone, setInitialCooldownCheckDone] =
+    useState(false);
 
   useEffect(() => {
     const fetchCooldown = async () => {
       if (session.data?.user.email) {
         try {
           const response = await fetch(
-            `/api/cooldown?email=${session.data.user.email}`
+            `/api/public/cooldown?email=${session.data.user.email}`
           );
           const data = await response.json();
           if (response.ok) {
-            setCooldown(data.cooldown);
+            setCooldown(data.cooldown > 0 ? data.cooldown : null);
           } else {
             showNotification({
               title: "Error",
               message: data.message,
               color: "red",
+              icon: <IconAlertCircle />,
             });
           }
         } catch (error) {
@@ -149,8 +193,13 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
             title: "Error",
             message: "Failed to fetch cooldown status.",
             color: "red",
+            icon: <IconAlertCircle />,
           });
+        } finally {
+          setInitialCooldownCheckDone(true);
         }
+      } else {
+        setInitialCooldownCheckDone(true); // No email, so no cooldown to check
       }
     };
 
@@ -158,7 +207,7 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
   }, [session.data?.user.email]);
 
   useEffect(() => {
-    if (cooldown !== null) {
+    if (cooldown !== null && cooldown > 0) {
       const interval = setInterval(() => {
         setCooldown((prev) => {
           if (prev && prev > 1000) {
@@ -190,12 +239,14 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
           title: "Error",
           message: data.message,
           color: "red",
+          icon: <IconAlertCircle />,
         });
       } else {
         showNotification({
-          title: "Email sent",
+          title: "Email Sent",
           message: "Please check your email for a verification link.",
           color: "green",
+          icon: <IconMailFast />,
         });
         setCooldown(5 * 60 * 1000); // 5 minutes cooldown
       }
@@ -205,64 +256,132 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
         title: "Error",
         message: "Failed to send verification email.",
         color: "red",
+        icon: <IconAlertCircle />,
       });
     } finally {
       setLoading(false);
     }
   };
 
+  const renderIcon = () => {
+    if (success) {
+      return (
+        <ThemeIcon color="green" size={60} radius="xl" mb="lg">
+          <IconCheck size={30} />
+        </ThemeIcon>
+      );
+    }
+    return (
+      <ThemeIcon color="blue" size={60} radius="xl" mb="lg">
+        <IconMailFast size={30} />
+      </ThemeIcon>
+    );
+  };
+
   return (
     <>
       <SharedHead
-        title="Verify email"
-        description="Verify your email address."
+        title="Verify Email"
+        description="Verify your email address to continue."
       />
-      <Group p="md" justify="space-between" align="center" h="100%">
-        <Link href="/">
-          <Title order={3}>{app.name}</Title>
-        </Link>
-        <Button
-          size="sm"
-          onClick={() =>
-            signOut({
-              redirect: true,
-              callbackUrl: "/",
-            })
-          }
+      <Box
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor:
+            "light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8))",
+        }}
+      >
+        <Box
+          component="header"
+          py="md"
+          style={{
+            borderBottom: `1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-7))`,
+          }}
         >
-          Sign Out
-        </Button>
-      </Group>
-      <Stack h="100vh" w="95%" align="center" justify="center" m="0 auto">
-        <Card p={"md"} shadow="sm" withBorder maw={600} aria-live="polite">
-          <Stack>
-            <Title order={2}>
-              {success ? "Success!" : "Verify your email"}
-            </Title>
-            <Text size="lg">{message}</Text>
-            {success ? (
-              <Button size="lg" component={Link} href="/dashboard">
-                Proceed to dashboard
-              </Button>
-            ) : (
-              <Button
-                size="lg"
-                onClick={resendVerificationEmail}
-                loading={loading}
-                disabled={cooldown !== null}
-              >
-                {cooldown !== null
-                  ? `Please wait ${
-                      cooldown > 60000
-                        ? `${Math.ceil(cooldown / 1000 / 60)} min`
-                        : `${Math.ceil(cooldown / 1000)} sec`
-                    }`
-                  : "Send verification email"}
-              </Button>
-            )}
-          </Stack>
-        </Card>
-      </Stack>
+          <Container size="lg">
+            <Group justify="space-between" align="center">
+              <Link href="/" style={{ textDecoration: "none" }}>
+                <Title order={3} c="dimmed">
+                  {app.name}
+                </Title>
+              </Link>
+              {session.data?.user && (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() =>
+                    signOut({
+                      redirect: true,
+                      callbackUrl: "/",
+                    })
+                  }
+                >
+                  Sign Out
+                </Button>
+              )}
+            </Group>
+          </Container>
+        </Box>
+
+        <Container
+          style={{ flexGrow: 1, display: "flex" }}
+          size="xs"
+          px="xs"
+          py="xl"
+        >
+          <Center style={{ width: "100%", height: "100%" }}>
+            <Paper p="xl" shadow="xl" radius="md" withBorder w="100%">
+              <Stack align="center">
+                {renderIcon()}
+                <Title order={2} ta="center">
+                  {success ? "Email Verified!" : "Verify Your Email"}
+                </Title>
+                <Text size="md" ta="center" c="dimmed" mb="xl">
+                  {message ||
+                    (success
+                      ? "You can now access all features."
+                      : "Please check your inbox for a verification link. If you don't see it, you can resend the email below.")}
+                </Text>
+                {success ? (
+                  <Button
+                    size="md"
+                    fullWidth
+                    component={Link}
+                    href="/dashboard"
+                    leftSection={<IconCheck size={18} />}
+                  >
+                    Proceed to Dashboard
+                  </Button>
+                ) : (
+                  <Button
+                    size="md"
+                    fullWidth
+                    onClick={resendVerificationEmail}
+                    loading={loading || !initialCooldownCheckDone}
+                    disabled={cooldown !== null || !initialCooldownCheckDone}
+                    leftSection={<IconMailFast size={18} />}
+                  >
+                    {cooldown !== null
+                      ? `Resend in ${
+                          cooldown > 60000
+                            ? `${Math.ceil(cooldown / 1000 / 60)} min`
+                            : `${Math.ceil(cooldown / 1000)} sec`
+                        }`
+                      : "Send Verification Email"}
+                  </Button>
+                )}
+              </Stack>
+            </Paper>
+          </Center>
+        </Container>
+        <Group p="md" justify="center">
+          <Text size="sm" c="dimmed">
+            © {new Date().getFullYear()} {app.name}. All rights reserved.
+          </Text>
+        </Group>
+      </Box>
     </>
   );
 };

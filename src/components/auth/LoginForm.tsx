@@ -17,6 +17,7 @@ import {
   Text,
   TextInput,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -39,13 +40,17 @@ const LoginForm: FC<ILoginFormProps> = ({
   providersLoading,
   callbackUrl,
 }) => {
+  const { colorScheme } = useMantineColorScheme();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { isVerified, recaptchaToken, handleVerify } = useRecaptcha();
   const recaptchaRef = useRef<RecaptchaRefHandle>(null);
 
   const form = useForm({
-    initialValues: { email: "", password: "" },
+    initialValues: {
+      email: "",
+      password: "",
+    },
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
@@ -99,7 +104,7 @@ const LoginForm: FC<ILoginFormProps> = ({
       <Stack justify="stretch" gap="xs" mb="md" align="center">
         <Link href="/">
           <Image
-            src={app.logoUrl}
+            src={colorScheme === "dark" ? app.logoUrl.dark : app.logoUrl.light}
             alt={app.logoUrlAlt}
             height={60}
             width={160}
@@ -107,7 +112,12 @@ const LoginForm: FC<ILoginFormProps> = ({
         </Link>
 
         <Stack align="center" mt={"md"} gap={4}>
-          <Title order={3} style={{ textAlign: "center" }}>
+          <Title
+            order={3}
+            style={{
+              textAlign: "center",
+            }}
+          >
             Welcome back to {app.name}!
           </Title>
           <Text>Please login to continue.</Text>

@@ -23,7 +23,10 @@ const ResetPasswordForm: FC<IResetPasswordFormProps> = ({ token }) => {
   const [doPasswordsMatch, setDoPasswordsMatch] = useState(false);
 
   const form = useForm({
-    initialValues: { password: "", confirmPassword: "" },
+    initialValues: {
+      password: "",
+      confirmPassword: "",
+    },
 
     validate: {
       password: (val) =>
@@ -48,7 +51,9 @@ const ResetPasswordForm: FC<IResetPasswordFormProps> = ({ token }) => {
     try {
       const result = await fetch("/api/auth/reset-password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ token, password: values.password }),
       });
 
@@ -81,7 +86,12 @@ const ResetPasswordForm: FC<IResetPasswordFormProps> = ({ token }) => {
     <Paper radius="md" p="md" m={"lg"} w={"95%"} maw={450}>
       <Stack justify="stretch" gap="xs" mb="md" align="center">
         <Stack align="center" mt={"md"} gap={4}>
-          <Title order={3} style={{ textAlign: "center" }}>
+          <Title
+            order={3}
+            style={{
+              textAlign: "center",
+            }}
+          >
             Reset Your Password
           </Title>
           <Text>Enter your new password below.</Text>

@@ -11,21 +11,27 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  phone         String?   @unique
-  accounts      Account[]
-  sessions      Session[]
-
-  // 1-1 -> User can have one Stripe customer
-  stripeCustomer StripeCustomer?
-
-  PasswordResetToken PasswordResetToken[]
-  preferences        UserPreferences?
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  emailVerified       DateTime?
+  password            String?
+  image               String?
+  phone               String?              @unique
+  hasUsedTrial        Boolean              @default(false) // Track if user has ever used trial
+  lastActiveAt        DateTime? // Track user activity for analytics
+  timezone            String? // User's timezone for scheduling/notifications
+  onboardingCompleted Boolean              @default(false) // Track onboarding completion
+  deletedAt           DateTime? // Soft delete timestamp
+  accounts            Account[]
+  sessions            Session[]
+  stripeCustomer      StripeCustomer?
+  subscription        Subscription?
+  usageRecords        UsageRecord[]
+  apiKeys             ApiKey[]
+  notifications       Notification[]
+  PasswordResetToken  PasswordResetToken[]
+  preferences         UserPreferences?
 }
 
 model Account {
@@ -103,6 +109,12 @@ model UserPreferences {
   updatedAt DateTime @updatedAt
 }
 
+enum DATA_REGION {
+  US
+  CA
+  EU
+}
+
 enum SubscriptionPlan {
   FREE
   PRO
@@ -111,12 +123,17 @@ enum SubscriptionPlan {
 
 enum SubscriptionStatus {
   ACTIVE
+  ACTIVE_TRIALING
   PAST_DUE
   CANCELED
   INCOMPLETE
   INCOMPLETE_EXPIRED
-  TRIALING
   UNPAID
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
 }
 
 model Subscription {
@@ -132,11 +149,14 @@ model Subscription {
   currentPeriodEnd      DateTime? // End of current billing period
   cancelAtPeriodEnd     Boolean            @default(false)
   transcriptionsUsed    Int                @default(0)
-  transcriptionsLimit   Int                @default(2) // Default for FREE tier
+  transcriptionsLimit   Int                @default(120) // Monthly transcription minutes limit
   trialEndsAt           DateTime? // When the trial period ends (if applicable)
   priceId               String? // Current price ID from Stripe
-  seatsPurchased        Int                @default(1) // Paid-for seats
-  billingInterval       String?            @default("MONTHLY") // "MONTHLY" or "YEARLY"
+  billingInterval       BillingInterval    @default(MONTHLY)
+
+  // 1-1: A subscription belongs to one user
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
 
   // Payment history
   invoices SubscriptionInvoice[]
@@ -145,6 +165,8 @@ model Subscription {
   @@index([stripeCustomerId])
   // Frequently fetching subscriptions based on stripe subscription id
   @@index([stripeSubscriptionId])
+  // Index for finding subscriptions that need renewal
+  @@index([currentPeriodEnd])
 }
 
 model SubscriptionInvoice {
@@ -166,16 +188,25 @@ model SubscriptionInvoice {
   @@index([subscriptionId])
 }
 
+enum UsageRecordType {
+  FILE_UPLOAD
+  STORAGE_BYTES
+}
+
 model UsageRecord {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  teamId    String
-  type      String // e.g., "transcription", "team_member", etc.
-  quantity  Int      @default(1)
+  id        String          @id @default(cuid())
+  createdAt DateTime        @default(now())
+  userId    String
+  type      UsageRecordType
+  quantity  Int             @default(1)
   metadata  Json? // Additional information
 
-  // Frequently fetching usage records based on team id and type
-  @@index([teamId, type])
+  // Relation to user
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Frequently fetching usage records based on user id and type
+  @@index([userId, type])
+  @@index([createdAt]) // Index for period-based queries
 }
 
 model StripeCustomer {
@@ -187,6 +218,50 @@ model StripeCustomer {
   // 1-1: A StripeCustomer belongs to one user
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  name        String // User-friendly name for the API key
+  keyHash     String    @unique // Hashed version of the API key
+  prefix      String    @db.VarChar(8) // First 8 chars for identification
+  lastUsedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime? // Optional expiration
+  isActive    Boolean   @default(true)
+  permissions Json? // Store API permissions as JSON
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([prefix])
+  @@index([userId])
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  BILLING
+  FEATURE_ANNOUNCEMENT
+  SYSTEM_MAINTENANCE
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  title     String
+  message   String           @db.Text
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  actionUrl String? // Optional URL for notification action
+  createdAt DateTime         @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([createdAt])
 }
 
 enum Role {

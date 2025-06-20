@@ -6,7 +6,10 @@ const app = {
   name: "Boilerplate",
   description:
     "Boilerplate is a SaaS starter-kit built with Next.js pages and MantineUI.",
-  logoUrl: "/logo.svg",
+  logoUrl: {
+    light: "/logo.svg",
+    dark: "/logo.svg",
+  },
   logoUrlAlt: "Boilerplate logo",
 };
 

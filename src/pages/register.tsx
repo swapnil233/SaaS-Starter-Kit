@@ -15,13 +15,23 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { delayChildren: 0.15, staggerChildren: 0.1 },
+    transition: {
+      delayChildren: 0.15,
+      staggerChildren: 0.1,
+    },
   },
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
 };
 
 const imageVariants = {
@@ -29,7 +39,11 @@ const imageVariants = {
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.6, ease: "easeOut", delay: 0.3 },
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+      delay: 0.3,
+    },
   },
 };
 
@@ -92,7 +106,7 @@ const RegisterPage: React.FC<IRegisterPage> = () => {
               <motion.div className="mb-10" variants={itemVariants}>
                 <Link href="/">
                   <Image
-                    src={app.logoUrl}
+                    src={app.logoUrl.dark}
                     alt={app.logoUrlAlt}
                     width={139}
                     height={40}

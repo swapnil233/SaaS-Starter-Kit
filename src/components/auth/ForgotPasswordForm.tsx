@@ -13,6 +13,7 @@ import {
   Text,
   TextInput,
   Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
@@ -25,11 +26,14 @@ interface IForgotPasswordFormProps {}
 const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
   const [loading, setLoading] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false); // Prevents spamming
+  const { colorScheme } = useMantineColorScheme();
   const { isVerified, recaptchaToken, handleVerify } = useRecaptcha();
   const recaptchaRef = useRef<RecaptchaRefHandle>(null);
 
   const form = useForm({
-    initialValues: { email: "" },
+    initialValues: {
+      email: "",
+    },
 
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
@@ -49,8 +53,13 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
     try {
       const result = await fetch("/api/auth/request-password-reset", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email, recaptchaToken }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: values.email,
+          recaptchaToken,
+        }),
       });
 
       const data = await result.json();
@@ -91,7 +100,7 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
       <Stack justify="stretch" gap="xs" mb="md" align="center">
         <Link href="/">
           <Image
-            src={app.logoUrl}
+            src={colorScheme === "dark" ? app.logoUrl.dark : app.logoUrl.light}
             alt={app.logoUrlAlt}
             height={60}
             width={60}
@@ -99,7 +108,12 @@ const ForgotPasswordForm: FC<IForgotPasswordFormProps> = () => {
         </Link>
 
         <Stack align="center" mt={"md"} gap={4}>
-          <Title order={3} style={{ textAlign: "center" }}>
+          <Title
+            order={3}
+            style={{
+              textAlign: "center",
+            }}
+          >
             Forgot your password?
           </Title>
           <Text>Enter your email to reset your password.</Text>
