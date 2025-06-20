@@ -1,6 +1,6 @@
 import { HttpStatus } from "@/lib/constants/HttpStatus";
 import prisma from "@/lib/prisma";
-import { sendPasswordResetConfirmationEmail } from "@/services/email.service";
+import { sendPasswordResetConfirmationEmail } from "@/services/email/auth.email.service";
 import { compare, hash } from "bcrypt";
 import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";

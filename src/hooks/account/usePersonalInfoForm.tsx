@@ -30,7 +30,7 @@ const schema = z.object({
 
 export const usePersonalInfoForm = (
   user: User,
-  preferences: UserPreferences
+  preferences: UserPreferences | null
 ) => {
   const queryClient = useQueryClient();
 
@@ -44,13 +44,13 @@ export const usePersonalInfoForm = (
     resolver: zodResolver(schema),
     defaultValues: {
       name: user.name || "",
-      emailNotifications: preferences.emailNotifications,
-      smsNotifications: preferences.smsNotifications,
-      pushNotifications: preferences.pushNotifications,
-      contactTimePreference: preferences.contactTimePreference || "MORNING",
-      darkMode: preferences.darkMode || false,
-      language: preferences.language || "en",
-      newsletterSubscribed: preferences.newsletterSubscribed || true,
+      emailNotifications: preferences?.emailNotifications ?? true,
+      smsNotifications: preferences?.smsNotifications ?? false,
+      pushNotifications: preferences?.pushNotifications ?? false,
+      contactTimePreference: preferences?.contactTimePreference || "MORNING",
+      darkMode: preferences?.darkMode ?? false,
+      language: preferences?.language || "en",
+      newsletterSubscribed: preferences?.newsletterSubscribed ?? true,
     },
   });
 
@@ -66,7 +66,7 @@ export const usePersonalInfoForm = (
       const profileResponse = await fetch("/api/users/updateProfile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: user.id, name: data.name }),
+        body: JSON.stringify({ name: data.name }),
       });
 
       if (!profileResponse.ok) {
@@ -80,7 +80,6 @@ export const usePersonalInfoForm = (
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id: user.id,
             emailNotifications: data.emailNotifications,
             smsNotifications: data.smsNotifications,
             pushNotifications: data.pushNotifications,

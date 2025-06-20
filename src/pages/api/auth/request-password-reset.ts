@@ -1,6 +1,6 @@
 import { verifyRecaptchaToken } from "@/lib/auth/verifyRecaptcha";
 import { HttpStatus } from "@/lib/constants/HttpStatus";
-import { sendPasswordResetEmail } from "@/services/email.service";
+import { sendPasswordResetEmail } from "@/services/email/auth.email.service";
 import {
   calculateTimeSincePasswordResetTokenLastSent,
   calculateWaitTimeForPasswordResetToken,

@@ -1,7 +1,7 @@
 import getGoogleCredentials from "@/lib/auth/getGoogleCredentials";
 import { verifyRecaptchaToken } from "@/lib/auth/verifyRecaptcha";
 import prisma from "@/lib/prisma";
-import { sendVerificationEmail } from "@/services/email.service";
+import { sendVerificationEmail } from "@/services/email/auth.email.service";
 import { getUser } from "@/services/user.service";
 import { createNewVerificationToken } from "@/services/verification.service";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -209,16 +209,25 @@ export const authOptions: NextAuthOptions = {
           );
         }
 
-        await prisma.userPreferences.create({
-          data: {
-            contactTimePreference: "MORNING",
-            emailNotifications: true,
-            pushNotifications: true,
-            smsNotifications: true,
-            darkMode: false,
-            userId: user.id,
-          },
+        // Check if preferences already exist to avoid unique constraint violations
+        const existingPreferences = await prisma.userPreferences.findUnique({
+          where: { userId: user.id },
         });
+
+        if (!existingPreferences) {
+          await prisma.userPreferences.create({
+            data: {
+              contactTimePreference: "MORNING",
+              emailNotifications: true,
+              pushNotifications: true,
+              smsNotifications: true,
+              darkMode: false,
+              userId: user.id,
+              language: "en",
+              newsletterSubscribed: true,
+            },
+          });
+        }
       } catch (error) {
         console.error("Error in createUser event:", error);
         // Continue execution - don't throw as this would break the auth flow

@@ -50,20 +50,10 @@ export default function App({
 
   const getLayout = Component.getLayout || ((page) => page);
 
-  // Get initial color scheme from system preference
-  const systemPreference =
-    typeof window !== "undefined"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light"
-      : "light";
-
   return (
     <SessionProvider session={session}>
       <QueryProvider>
-        <MantineProvider
-          defaultColorScheme={systemPreference as "light" | "dark"}
-        >
+        <MantineProvider defaultColorScheme="auto">
           <RouterTransition />
           {getLayout(
             <main className={beVietnamPro.className}>

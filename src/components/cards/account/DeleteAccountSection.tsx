@@ -8,7 +8,7 @@ interface DeleteAccountSectionProps {
     confirmText?: string;
   }) => Promise<void>;
   isLoading: boolean;
-  account: Account;
+  account: Account | null;
 }
 
 const DeleteAccountSection = ({
@@ -32,7 +32,7 @@ const DeleteAccountSection = ({
             <DeleteAccountModal
               onConfirm={handleDeleteAccount}
               isLoading={isLoading}
-              accountType={account.type}
+              accountType={account?.type}
             />
           </Group>
         </Card>

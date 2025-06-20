@@ -3,7 +3,7 @@ import app from "@/lib/app";
 import { auth } from "@/lib/auth/auth";
 import { host } from "@/lib/host";
 import prisma from "@/lib/prisma";
-import { sendWelcomeEmail } from "@/services/email.service";
+import { sendWelcomeEmail } from "@/services/email/auth.email.service";
 import {
   deleteVerificationToken,
   getUser,

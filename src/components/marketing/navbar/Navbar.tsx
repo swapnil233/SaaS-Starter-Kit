@@ -1,36 +1,39 @@
+import app from "@/lib/app";
+import { featuresList } from "@/lib/marketing/featuresList";
 import {
-  HoverCard,
-  Group,
-  Button,
-  UnstyledButton,
-  Text,
-  SimpleGrid,
-  ThemeIcon,
   Anchor,
-  Divider,
-  Center,
   Box,
   Burger,
-  Drawer,
+  Button,
+  Center,
   Collapse,
+  Divider,
+  Drawer,
+  Group,
+  HoverCard,
   ScrollArea,
-  rem,
-  useMantineTheme,
+  SimpleGrid,
   Stack,
+  Text,
+  ThemeIcon,
+  UnstyledButton,
+  rem,
+  useComputedColorScheme,
+  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons-react";
-import classes from "./Navbar.module.css";
-import Link from "next/link";
 import Image from "next/image";
-import app from "@/lib/app";
-import { featuresList } from "@/lib/marketing/featuresList";
+import Link from "next/link";
+import { ColorSchemeToggle } from "../../shared/user/ColorSchemeToggle";
+import classes from "./Navbar.module.css";
 
 export function Navbar() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
   const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
   const theme = useMantineTheme();
+  const computedColorScheme = useComputedColorScheme("light");
 
   // Show the first 4 from the master list of features
   const links = featuresList.slice(0, 4).map((item) => (
@@ -60,7 +63,11 @@ export function Navbar() {
         <Group justify="space-between" h="100%">
           <Link href="/">
             <Image
-              src={app.logoUrl}
+              src={
+                computedColorScheme === "dark"
+                  ? app.logoUrl.dark
+                  : app.logoUrl.light
+              }
               alt={app.logoUrlAlt}
               height={40}
               width={40}
@@ -137,6 +144,7 @@ export function Navbar() {
           </Group>
 
           <Group visibleFrom="sm">
+            <ColorSchemeToggle />
             <Button variant="default" component={Link} href="/signin">
               Sign in
             </Button>
@@ -161,7 +169,11 @@ export function Navbar() {
         title={
           <Link href="/">
             <Image
-              src={app.logoUrl}
+              src={
+                computedColorScheme === "dark"
+                  ? app.logoUrl.dark
+                  : app.logoUrl.light
+              }
               alt={app.logoUrlAlt}
               height={40}
               width={40}

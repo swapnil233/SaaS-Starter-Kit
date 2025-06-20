@@ -13,12 +13,15 @@ import { Account } from "@prisma/client";
 import { IconInfoCircle } from "@tabler/icons-react";
 
 interface ChangePasswordProps {
-  account: Account;
+  account: Account | null;
 }
 
 const ChangePassword = ({ account }: ChangePasswordProps) => {
   const { register, handleSubmit, onSubmit, isLoading } =
     useChangePasswordForm(account);
+
+  const isOAuthAccount = account?.type === "oauth";
+  const canChangePassword = account?.type === "credentials";
 
   return (
     <Grid gutter="xl">
@@ -42,14 +45,26 @@ const ChangePassword = ({ account }: ChangePasswordProps) => {
                 px={{ base: 16, md: 32 }}
                 py={{ base: 16, md: 32 }}
               >
-                {account.type === "oauth" && (
+                {isOAuthAccount && (
                   <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
                     <Text>
-                      You can’t change your password because your account is
-                      verified with{" "}
-                      {account.provider.charAt(0).toUpperCase() +
-                        account.provider.slice(1)}
+                      You can&apos;t change your password because your account
+                      is verified with{" "}
+                      {account?.provider.charAt(0).toUpperCase() +
+                        account?.provider.slice(1)}
                       .
+                    </Text>
+                  </Alert>
+                )}
+                {!canChangePassword && !isOAuthAccount && (
+                  <Alert
+                    variant="light"
+                    color="orange"
+                    icon={<IconInfoCircle />}
+                  >
+                    <Text>
+                      Password change is not available for this account type or
+                      setup.
                     </Text>
                   </Alert>
                 )}
@@ -57,19 +72,19 @@ const ChangePassword = ({ account }: ChangePasswordProps) => {
                   radius="xs"
                   label="Current password"
                   required
-                  disabled={account.type === "oauth"}
+                  disabled={!canChangePassword}
                   {...register("currentPassword")}
                 />
                 <PasswordInput
                   radius="xs"
                   label="New password"
-                  disabled={account.type === "oauth"}
+                  disabled={!canChangePassword}
                   {...register("newPassword")}
                 />
                 <PasswordInput
                   radius="xs"
                   label="Confirm new password"
-                  disabled={account.type === "oauth"}
+                  disabled={!canChangePassword}
                   {...register("confirmNewPassword")}
                 />
               </Stack>
@@ -78,7 +93,7 @@ const ChangePassword = ({ account }: ChangePasswordProps) => {
                 <Button
                   type="submit"
                   loading={isLoading}
-                  disabled={account.type === "oauth"}
+                  disabled={!canChangePassword}
                 >
                   Save changes
                 </Button>

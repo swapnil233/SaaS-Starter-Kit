@@ -11,7 +11,6 @@ const PUBLIC_API_PREFIXES = [
   "/api/webhooks", // Stripe etc.
   "/api/public", // cooldown.ts, subscription-selection.ts
   "/api/users/verification",
-  "/api/deepgram",
 ];
 
 // Sensitive endpoints that need rate limiting.
@@ -21,7 +20,6 @@ const RATE_LIMIT_ENDPOINTS = [
   { path: "/api/auth/request-password-reset", limit: 10, windowSeconds: 3600 }, // 10 reqs/hour (3600 seconds)
   { path: "/api/users/verification", limit: 10, windowSeconds: 3600 }, // 10 reqs/hour (3600 seconds)
   { path: "/api/public/cooldown", limit: 10, windowSeconds: 60 }, // 10 reqs/min (60 seconds)
-  { path: "/api/public/subscription-selection", limit: 10, windowSeconds: 60 }, // 10 reqs/min (60 seconds)
 ];
 
 // Pre-create rate limiters for each sensitive endpoint to avoid creating them on each request
@@ -42,7 +40,7 @@ const rateLimiters = RATE_LIMIT_ENDPOINTS.reduce(
 
 // The code below will run on all routes that begin with /teams/
 export const config = {
-  matcher: ["/teams/:path*", "/account", "/api/:path*"],
+  matcher: ["/dashboard/:path*", "/account", "/api/:path*"],
 };
 
 export default async function middleware(req: NextRequest) {

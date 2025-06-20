@@ -26,7 +26,7 @@ const schema = z
     message: "Passwords do not match",
   });
 
-export const useChangePasswordForm = (_account: Account) => {
+export const useChangePasswordForm = (_account: Account | null) => {
   const {
     register,
     handleSubmit,

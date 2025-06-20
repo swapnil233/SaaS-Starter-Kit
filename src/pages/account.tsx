@@ -2,6 +2,7 @@ import ChangePassword from "@/components/cards/account/ChangePassword";
 import DeleteAccountSection from "@/components/cards/account/DeleteAccountSection";
 import Integrations from "@/components/cards/account/Integrations";
 import PersonalInfo from "@/components/cards/account/PersonalInfo";
+import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
 import SharedHead from "@/components/shared/SharedHead";
 import { auth } from "@/lib/auth/auth";
 import { NextPageWithLayout } from "@/pages/page";
@@ -20,14 +21,24 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context.req, context.res);
 
   if (!session) {
-    return { redirect: { destination: `/signin`, permanent: false } };
+    return {
+      redirect: {
+        destination: `/signin`,
+        permanent: false,
+      },
+    };
   }
 
   try {
     const user = await getUser({ id: session.user.id });
 
     if (!user) {
-      return { redirect: { destination: `/signin`, permanent: false } };
+      return {
+        redirect: {
+          destination: `/signin`,
+          permanent: false,
+        },
+      };
     }
 
     const account = await getUserAccount(user.id);
@@ -42,14 +53,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   } catch (error) {
     console.error("Error fetching user:", error);
-    return { redirect: { destination: "/signin", permanent: false } };
+    return {
+      redirect: {
+        destination: "/signin",
+        permanent: false,
+      },
+    };
   }
 }
 
 interface IAccountPageProps {
   user: User;
-  account: Account;
-  preferences: UserPreferences;
+  account: Account | null;
+  preferences: UserPreferences | null;
 }
 
 const AccountPage: NextPageWithLayout<IAccountPageProps> = ({
@@ -65,7 +81,9 @@ const AccountPage: NextPageWithLayout<IAccountPageProps> = ({
     mutationFn: async ({ userId, password, confirmText }) => {
       const response = await fetch(`/api/users/${userId}/accounts`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ password, confirmText }),
       });
 
@@ -83,14 +101,25 @@ const AccountPage: NextPageWithLayout<IAccountPageProps> = ({
     password?: string;
     confirmText?: string;
   }) => {
-    return deleteAccountMutation.mutateAsync({ userId: user.id, ...data });
+    return deleteAccountMutation.mutateAsync({
+      userId: user.id,
+      ...data,
+    });
   };
 
   return (
     <>
       <SharedHead title="Account" description="View your account details" />
 
-      <Title order={1}>Account</Title>
+      {/* <PageHeading
+        title="Account"
+        description="View and manage your account details."
+        breadcrumbs={[{ title: "Home", href: "/" }]}
+      /> */}
+
+      <Title order={1} mb="md">
+        Account
+      </Title>
 
       <PersonalInfo user={user} preferences={preferences} />
       <ChangePassword account={account} />
@@ -105,3 +134,6 @@ const AccountPage: NextPageWithLayout<IAccountPageProps> = ({
 };
 
 export default AccountPage;
+AccountPage.getLayout = (page) => {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};

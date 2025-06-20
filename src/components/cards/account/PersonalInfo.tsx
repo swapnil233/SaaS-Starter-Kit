@@ -23,7 +23,7 @@ import { useSession } from "next-auth/react";
 
 interface PersonalInfoProps {
   user: User;
-  preferences: UserPreferences;
+  preferences: UserPreferences | null;
 }
 
 const PersonalInfo = ({

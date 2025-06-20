@@ -1,40 +1,59 @@
-import { Tooltip } from "@mantine/core";
+import { isLinkActive } from "@/lib/navigation";
+import { Tooltip, useMantineColorScheme } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, ReactNode } from "react";
 
-interface NavButtonProps {
+export interface NavButtonProps {
   href: string;
+  as?: string;
   icon: ReactNode;
   label: string;
   isCollapsed: boolean;
-  closeMobileNav: () => void;
+  closeMobileSidebarNav: () => void;
+  nested?: boolean;
+  children?: ReactNode;
+  dontPrefetch?: boolean;
 }
 
 const NavButton: FC<NavButtonProps> = ({
   href,
+  as,
   icon,
   label,
   isCollapsed,
-  closeMobileNav,
+  closeMobileSidebarNav,
+  nested = false,
+  children,
+  dontPrefetch,
 }) => {
   const router = useRouter();
-  const isActive = router.pathname === href;
+  const isActive = isLinkActive(router.pathname, href);
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    closeMobileNav();
-    router.push(href);
+  const { colorScheme } = useMantineColorScheme();
+  const isDarkMode = colorScheme === "dark";
+
+  const handleClick = () => {
+    closeMobileSidebarNav();
   };
 
   const linkContent = (
     <Link
       href={href}
+      prefetch={false}
+      as={as}
+      {...(dontPrefetch === true && { prefetch: false })}
       onClick={handleClick}
-      className={`flex ${isCollapsed ? "px-2" : "px-[13px]"} py-3 text-sm rounded-md ${
+      className={`flex ${
+        isCollapsed ? "px-2" : nested ? "pl-6" : "px-[13px]"
+      } py-3 text-sm rounded-md ${
         isActive
-          ? "bg-gray-200 text-gray-900 font-semibold"
-          : "text-gray-600 hover:bg-gray-100"
+          ? isDarkMode
+            ? "bg-[#1a1b1e]"
+            : "bg-[#e0f1ff]"
+          : isDarkMode
+            ? "hover:bg-[#1a1b1e]"
+            : "hover:bg-[#e9ecef]"
       } ${isCollapsed && "justify-center"}`}
     >
       <span className={isCollapsed ? "" : "mr-3"}>{icon}</span>
@@ -42,10 +61,18 @@ const NavButton: FC<NavButtonProps> = ({
     </Link>
   );
 
-  return isCollapsed ? (
-    <Tooltip label={label}>{linkContent}</Tooltip>
-  ) : (
-    linkContent
+  return (
+    <div>
+      {isCollapsed ? (
+        <Tooltip label={label}>{linkContent}</Tooltip>
+      ) : (
+        linkContent
+      )}
+      {children && !isCollapsed && (
+        // Indentation for nested children with gap between items
+        <div className="pl-4 pt-2 flex flex-col gap-2">{children}</div>
+      )}
+    </div>
   );
 };
 

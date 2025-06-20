@@ -1,4 +1,10 @@
-import { ActionIcon, Indicator, Menu } from "@mantine/core";
+import {
+  ActionIcon,
+  Indicator,
+  Menu,
+  useMantineColorScheme,
+  useMantineTheme,
+} from "@mantine/core";
 import { IconBell } from "@tabler/icons-react";
 
 export interface INotificationsButtonProps {
@@ -8,17 +14,31 @@ export interface INotificationsButtonProps {
 const NotificationsButton: React.FC<INotificationsButtonProps> = ({
   newNotifications,
 }) => {
+  const { colors } = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
+
   return (
     <Menu>
       <Menu.Target>
-        <Indicator size={newNotifications ? 10 : 0} offset={11}>
+        <Indicator
+          withBorder
+          size={newNotifications ? 12 : 0}
+          offset={11}
+          color="red"
+          processing={newNotifications}
+          disabled={!newNotifications}
+        >
           <ActionIcon
             variant="subtle"
             radius="xl"
             aria-label="Notifications"
             size="lg"
+            color={colorScheme === "dark" ? colors.dark[0] : colors.gray[9]}
           >
-            <IconBell stroke={1.4} color="black" />
+            <IconBell
+              stroke={1.4}
+              color={colorScheme === "dark" ? colors.dark[0] : colors.gray[7]}
+            />
           </ActionIcon>
         </Indicator>
       </Menu.Target>
