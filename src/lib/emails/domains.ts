@@ -1,15 +1,15 @@
 import app from "@/lib/app";
 
-export const EMAIL_DOMAIN = process.env.EMAIL_DOMAIN || "qualsearch.io";
+export const EMAIL_DOMAIN = process.env.EMAIL_DOMAIN!;
 
 // Sender addresses for different email types
 export const FROM_ADDRESSES = {
-  notifications: `QualSearch <notifications@${EMAIL_DOMAIN}>`,
-  invites: `QualSearch <invites@${EMAIL_DOMAIN}>`,
-  welcome: `QualSearch <welcome@${EMAIL_DOMAIN}>`,
-  verify: `QualSearch <verify@${EMAIL_DOMAIN}>`,
-  reset: `QualSearch <reset@${EMAIL_DOMAIN}>`,
-  help: `QualSearch <help@${EMAIL_DOMAIN}>`,
+  notifications: `${app.name} <notifications@${EMAIL_DOMAIN}>`,
+  invites: `${app.name} <invites@${EMAIL_DOMAIN}>`,
+  welcome: `${app.name} <welcome@${EMAIL_DOMAIN}>`,
+  verify: `${app.name} <verify@${EMAIL_DOMAIN}>`,
+  reset: `${app.name} <reset@${EMAIL_DOMAIN}>`,
+  help: `${app.name} <help@${EMAIL_DOMAIN}>`,
 } as const;
 
 // Subject formatting helpers
@@ -23,7 +23,7 @@ export const createSubjects = {
   resetConfirmation: () => createSubject("Password Reset Successfully"),
   invitation: (teamName: string) => `Join ${teamName} on ${app.name}`,
   invitationAccepted: (newMemberName: string, teamName: string | null) =>
-    `${newMemberName} just joined your team ${teamName || "on QualSearch"}`,
+    `${newMemberName} just joined your team ${teamName || `on ${app.name}`}`,
   invitationDeclined: (declinedByName: string, teamName: string | null) =>
     `${declinedByName} declined your invitation to ${teamName || "your team"}`,
   teamCreated: (teamName: string, isPaidPlan: boolean = false) =>

@@ -10,6 +10,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import app from "../app";
 
 interface PasswordResetEmailProps {
   name: string;
@@ -29,7 +30,7 @@ export const PasswordResetEmail = ({
       <Container style={container}>
         <Text style={paragraph}>Hi {name},</Text>
         <Text style={paragraph}>
-          We received a request to reset your password for QualSearch. Click the
+          We received a request to reset your password for {app.name}. Click the
           button below to reset your password.
         </Text>
         <Section style={btnContainer}>
@@ -46,7 +47,7 @@ export const PasswordResetEmail = ({
         <Text style={paragraph}>
           Best,
           <br />
-          The QualSearch team
+          The {app.name} team
         </Text>
         <Hr style={hr} />
         <Text style={footer}>123 Elmo Street, Toronto, ON A1A A1A Canada</Text>
@@ -57,7 +58,7 @@ export const PasswordResetEmail = ({
 
 PasswordResetEmail.PreviewProps = {
   name: "Hasan Iqbal",
-  subject: "Reset your password for QualSearch",
+  subject: `Reset your password for ${app.name}`,
   resetLink: "https://qualsearch.io/reset-password?token=abc123",
 } as PasswordResetEmailProps;
 

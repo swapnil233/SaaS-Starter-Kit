@@ -9,6 +9,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import app from "../app";
 
 interface WelcomeEmailProps {
   name: string;
@@ -17,7 +18,7 @@ interface WelcomeEmailProps {
 
 export const WelcomeEmail = ({
   name = "User",
-  subject = "Welcome to QualSearch",
+  subject = `Welcome to ${app.name}`,
 }: WelcomeEmailProps) => (
   <Html>
     <Head />
@@ -26,17 +27,17 @@ export const WelcomeEmail = ({
       <Container style={container}>
         <Text style={paragraph}>Hi {name},</Text>
         <Text style={paragraph}>
-          Welcome to QualSearch, the best business in the entire multiverse.
+          Welcome to {app.name}, the best business in the entire multiverse.
         </Text>
         <Section style={btnContainer}>
-          <Button style={button} href="https://qualsearch.io/signin">
+          <Button style={button} href={`${app.prodUrl}/signin`}>
             Get started
           </Button>
         </Section>
         <Text style={paragraph}>
           Best,
           <br />
-          The QualSearch team
+          The {app.name} team
         </Text>
         <Hr style={hr} />
         <Text style={footer}>123 Elmo Street, Toronto, ON A1A A1A Canada</Text>
@@ -47,7 +48,7 @@ export const WelcomeEmail = ({
 
 WelcomeEmail.PreviewProps = {
   name: "Hasan Iqbal",
-  subject: "Welcome to QualSearch",
+  subject: `Welcome to ${app.name}`,
 } as WelcomeEmailProps;
 
 export default WelcomeEmail;

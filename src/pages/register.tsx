@@ -128,7 +128,7 @@ const RegisterPage: React.FC<IRegisterPage> = () => {
               <motion.div className="relative w-full" variants={imageVariants}>
                 <Image
                   src="https://qualsearch-public.s3.us-east-1.amazonaws.com/public/demo-light-no-border.png"
-                  alt="QualSearch product screenshot"
+                  alt={`${app.name} product screenshot`}
                   width={800}
                   height={500}
                   className="rounded-lg shadow-lg object-cover w-full"

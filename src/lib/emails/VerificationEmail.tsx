@@ -10,6 +10,7 @@ import {
   Section,
   Text,
 } from "@react-email/components";
+import app from "../app";
 
 interface VerificationEmailProps {
   name: string;
@@ -19,7 +20,7 @@ interface VerificationEmailProps {
 
 export const VerificationEmail = ({
   name = "User",
-  subject = "Verify your email for QualSearch",
+  subject = `Verify your email for ${app.name}`,
   verificationLink = "https://qualsearch.io/verify-email?token=xyz",
 }: VerificationEmailProps) => (
   <Html>
@@ -29,7 +30,7 @@ export const VerificationEmail = ({
       <Container style={container}>
         <Text style={paragraph}>Hi {name},</Text>
         <Text style={paragraph}>
-          Thank you for signing up for QualSearch. Please verify your email
+          Thank you for signing up for {app.name}. Please verify your email
           address by clicking the button below.
         </Text>
         <Section style={btnContainer}>
@@ -42,7 +43,7 @@ export const VerificationEmail = ({
         <Text style={paragraph}>
           Best,
           <br />
-          The QualSearch team
+          The {app.name} team
         </Text>
         <Hr style={hr} />
         <Text style={footer}>123 Elmo Street, Toronto, ON A1A A1A Canada</Text>
@@ -53,7 +54,7 @@ export const VerificationEmail = ({
 
 VerificationEmail.PreviewProps = {
   name: "Hasan Iqbal",
-  subject: "Verify your email for QualSearch",
+  subject: `Verify your email for ${app.name}`,
   verificationLink: "https://qualsearch.io/verify-email?token=abc123",
 } as VerificationEmailProps;
 

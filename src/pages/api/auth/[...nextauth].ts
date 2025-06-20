@@ -1,3 +1,4 @@
+import app from "@/lib/app";
 import getGoogleCredentials from "@/lib/auth/getGoogleCredentials";
 import { verifyRecaptchaToken } from "@/lib/auth/verifyRecaptcha";
 import prisma from "@/lib/prisma";
@@ -132,8 +133,8 @@ export const authOptions: NextAuthOptions = {
         process.env.JWT_SECRET!,
         {
           expiresIn: "1h",
-          issuer: process.env.NEXTAUTH_URL || "https://qualsearch.io",
-          audience: "qualsearch-api",
+          issuer: process.env.NEXTAUTH_URL || app.prodUrl,
+          audience: `${app.name}-api`,
         }
       );
 
