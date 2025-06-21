@@ -173,7 +173,9 @@ export const authOptions: NextAuthOptions = {
           email: token.email || null,
           image: token.picture || null,
           emailVerified: token.emailVerified
-            ? new Date(token.emailVerified as string)
+            ? token.emailVerified instanceof Date
+              ? token.emailVerified
+              : new Date(token.emailVerified as string)
             : null,
         };
       }
