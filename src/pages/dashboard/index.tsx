@@ -1,11 +1,11 @@
-import { GetServerSidePropsContext } from "next";
-import { User } from "@prisma/client";
-import { auth } from "@/lib/auth/auth";
-import { NextPageWithLayout } from "../page";
-import { getUser } from "@/services/user.service";
 import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
-import { Stack, Title } from "@mantine/core";
 import SharedHead from "@/components/shared/SharedHead";
+import { auth } from "@/lib/auth/auth";
+import { getUser } from "@/services/user.service";
+import { Stack, Title } from "@mantine/core";
+import { User } from "@prisma/client";
+import { GetServerSidePropsContext } from "next";
+import { NextPageWithLayout } from "../page";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context.req, context.res);
