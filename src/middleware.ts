@@ -89,7 +89,10 @@ export default async function middleware(req: NextRequest) {
   }
 
   // Decode the next-auth cookie only (no DB, no Prisma)
-  const token = await getToken({ req });
+  const token = await getToken({
+    req,
+    secret: process.env.JWT_SECRET,
+  });
 
   if (pathname.startsWith("/api/")) {
     if (!token)
