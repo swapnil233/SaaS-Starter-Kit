@@ -4,12 +4,9 @@ import { ipAddress } from "@vercel/functions";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-// @todo for team: update this whenever a new public API route is created.
-// @Couls
 const PUBLIC_API_PREFIXES = [
   "/api/auth",
-  "/api/webhooks", // Stripe etc.
-  "/api/public", // cooldown.ts, subscription-selection.ts
+  "/api/public", // cooldown.ts
   "/api/users/verification",
 ];
 
@@ -38,7 +35,7 @@ const rateLimiters = RATE_LIMIT_ENDPOINTS.reduce(
   {} as Record<string, Ratelimit>
 );
 
-// The code below will run on all routes that begin with /teams/
+// The code below will run on all routes that begin with /dashboard/ or /account or /api/
 export const config = {
   matcher: ["/dashboard/:path*", "/account", "/api/:path*"],
 };
