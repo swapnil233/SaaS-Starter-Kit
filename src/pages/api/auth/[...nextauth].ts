@@ -1,6 +1,7 @@
 import app from "@/lib/app";
 import getGoogleCredentials from "@/lib/auth/getGoogleCredentials";
 import { verifyRecaptchaToken } from "@/lib/auth/verifyRecaptcha";
+import { host } from "@/lib/host";
 import prisma from "@/lib/prisma";
 import { sendVerificationEmail } from "@/services/email/auth.email.service";
 import { getUser } from "@/services/user.service";
@@ -133,7 +134,7 @@ export const authOptions: NextAuthOptions = {
         process.env.JWT_SECRET!,
         {
           expiresIn: "1h",
-          issuer: process.env.NEXTAUTH_URL || app.prodUrl,
+          issuer: process.env.NEXTAUTH_URL || host,
           audience: `${app.name}-api`,
         }
       );

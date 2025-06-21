@@ -76,10 +76,7 @@ export const generateSignedUrl = async (
 // Fetch the signed URL for a file in the S3 bucket given the key (file path)
 export const fetchSignedUrl = async (key: string): Promise<string> => {
   try {
-    const apiUrl =
-      process.env.NODE_ENV === "development" ? "http://localhost:3003" : host;
-
-    const response = await fetch(`${apiUrl}/api/files/signed-url?key=${key}`);
+    const response = await fetch(`${host}/api/files/signed-url?key=${key}`);
 
     if (!response.ok) {
       throw new Error(`Failed to get signed URL: ${response.statusText}`);

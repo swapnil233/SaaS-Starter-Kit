@@ -10,6 +10,7 @@ import {
   Text,
 } from "@react-email/components";
 import app from "../app";
+import { host } from "../host";
 
 interface WelcomeEmailProps {
   name: string;
@@ -30,7 +31,7 @@ export const WelcomeEmail = ({
           Welcome to {app.name}, the best business in the entire multiverse.
         </Text>
         <Section style={btnContainer}>
-          <Button style={button} href={`${app.prodUrl}/signin`}>
+          <Button style={button} href={`${host}/signin`}>
             Get started
           </Button>
         </Section>
