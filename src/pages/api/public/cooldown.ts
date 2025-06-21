@@ -1,3 +1,4 @@
+import { HttpStatus } from "@/lib/constants/HttpStatus";
 import { getVerificationToken } from "@/services/verification.service";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -11,7 +12,9 @@ export default async function handler(
     try {
       const email = req.query.email as string;
       if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+        return res
+          .status(HttpStatus.BadRequest)
+          .json({ message: "Email is required" });
       }
 
       const existingToken = await getVerificationToken({ email });
@@ -22,19 +25,23 @@ export default async function handler(
           now.getTime() - new Date(existingToken.lastSent).getTime();
 
         if (timeSinceLastSent < COOLDOWN_PERIOD_MS) {
-          return res.status(200).json({
+          return res.status(HttpStatus.Ok).json({
             cooldown: COOLDOWN_PERIOD_MS - timeSinceLastSent,
           });
         }
       }
 
-      return res.status(200).json({ cooldown: 0 });
+      return res.status(HttpStatus.Ok).json({ cooldown: 0 });
     } catch (error) {
       console.error("API handler error:", error);
-      return res.status(500).json({ message: "Internal server error" });
+      return res
+        .status(HttpStatus.InternalServerError)
+        .json({ message: "Internal server error" });
     }
   } else {
     res.setHeader("Allow", ["GET"]);
-    res.status(405).json({ message: `Method ${req.method} Not Allowed` });
+    res
+      .status(HttpStatus.MethodNotAllowed)
+      .json({ message: `Method ${req.method} Not Allowed` });
   }
 }
