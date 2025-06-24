@@ -104,14 +104,16 @@ export const usePersonalInfoForm = (
     },
     onMutate: async (newData) => {
       // Cancel any outgoing refetches so they don't overwrite our optimistic update
-      await queryClient.cancelQueries({ queryKey: queryKeys.user() });
+      await queryClient.cancelQueries({ queryKey: queryKeys.user.profile() });
 
       // Snapshot the previous value
-      const previousUser = queryClient.getQueryData<User>(queryKeys.user());
+      const previousUser = queryClient.getQueryData<User>(
+        queryKeys.user.profile()
+      );
 
       // Optimistically update to the new value
       if (previousUser) {
-        queryClient.setQueryData<User>(queryKeys.user(), {
+        queryClient.setQueryData<User>(queryKeys.user.profile(), {
           ...previousUser,
           name: newData.name,
         });
@@ -122,7 +124,10 @@ export const usePersonalInfoForm = (
     onError: (_error, _newData, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousUser) {
-        queryClient.setQueryData(queryKeys.user(), context.previousUser);
+        queryClient.setQueryData(
+          queryKeys.user.profile(),
+          context.previousUser
+        );
       }
       notifications.show({
         title: "We couldn't save your changes",
@@ -132,7 +137,7 @@ export const usePersonalInfoForm = (
     },
     onSettled: () => {
       // Always refetch after error or success to ensure we have the latest data
-      queryClient.refetchQueries({ queryKey: queryKeys.user() });
+      queryClient.refetchQueries({ queryKey: queryKeys.user.profile() });
     },
     onSuccess: () => {
       notifications.show({

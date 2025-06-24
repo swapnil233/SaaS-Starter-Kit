@@ -6,7 +6,7 @@ const PricingTitle: React.FC = () => (
       className="font-extrabold mb-4 text-center sm:text-left"
       style={{ fontFamily: "Greycliff CF, var(--mantine-font-family)" }}
     >
-      Various types of{" "}
+      Simple{" "}
       <Text
         component="span"
         inherit
@@ -15,11 +15,12 @@ const PricingTitle: React.FC = () => (
       >
         pricing
       </Text>{" "}
-      plans.
+      for everyone.
     </Title>
     <p className="text-base md:text-lg text-gray-600 max-w-[48rem] text-center">
-      Configure various pricing plans, including all paid plans, a mix of free
-      and paid plans, or just a single one-time purchase plan
+      Choose the perfect plan for your needs. Start free and upgrade as you
+      grow. All plans include our core features with increasing limits and
+      premium support.
     </p>
   </div>
 );

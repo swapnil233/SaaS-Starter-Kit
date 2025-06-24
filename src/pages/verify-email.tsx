@@ -3,6 +3,10 @@ import app from "@/lib/app";
 import { auth } from "@/lib/auth/auth";
 import { host } from "@/lib/host";
 import prisma from "@/lib/prisma";
+import {
+  createSubscriptionIntentUrl,
+  getSubscriptionIntent,
+} from "@/lib/subscriptions/subscription-intent";
 import { sendWelcomeEmail } from "@/services/email/auth.email.service";
 import {
   deleteVerificationToken,
@@ -30,6 +34,7 @@ import { IconAlertCircle, IconCheck, IconMailFast } from "@tabler/icons-react";
 import { GetServerSidePropsContext } from "next";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 
 /*
@@ -164,10 +169,22 @@ interface IVerifyEmailPage {
 
 const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
   const session = useSession();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState<number | null>(null);
   const [initialCooldownCheckDone, setInitialCooldownCheckDone] =
     useState(false);
+
+  // Handle subscription intent after successful verification
+  const handleDashboardRedirect = () => {
+    const intent = getSubscriptionIntent();
+    if (intent) {
+      const dashboardUrl = createSubscriptionIntentUrl("/dashboard", intent);
+      router.push(dashboardUrl);
+    } else {
+      router.push("/dashboard");
+    }
+  };
 
   useEffect(() => {
     const fetchCooldown = async () => {
@@ -348,8 +365,7 @@ const VerifyEmailPage: FC<IVerifyEmailPage> = ({ success, message }) => {
                   <Button
                     size="md"
                     fullWidth
-                    component={Link}
-                    href="/dashboard"
+                    onClick={handleDashboardRedirect}
                     leftSection={<IconCheck size={18} />}
                   >
                     Proceed to Dashboard

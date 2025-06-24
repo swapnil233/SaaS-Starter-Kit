@@ -6,12 +6,12 @@ export const useUser = (initialData?: User) => {
   const queryClient = useQueryClient();
 
   // If we have initial data, set it in the cache
-  if (initialData && !queryClient.getQueryData(queryKeys.user())) {
-    queryClient.setQueryData(queryKeys.user(), initialData);
+  if (initialData && !queryClient.getQueryData(queryKeys.user.profile())) {
+    queryClient.setQueryData(queryKeys.user.profile(), initialData);
   }
 
   return useQuery<User>({
-    queryKey: queryKeys.user(),
+    queryKey: queryKeys.user.profile(),
     queryFn: async () => {
       try {
         const response = await fetch("/api/users/me");

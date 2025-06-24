@@ -22,6 +22,7 @@ const DashboardLayout: FC<IDashboardLayout> = ({
     handleCollapseClick,
     closeMobileSidebar,
     showProBanner,
+    setShowProBanner,
   } = useSidebarDisclosure();
 
   return (
@@ -52,7 +53,8 @@ const DashboardLayout: FC<IDashboardLayout> = ({
         sidebarWasExpanded={sidebarWasExpanded}
         handleCollapseClick={handleCollapseClick}
         closeMobileSidebar={closeMobileSidebar}
-        _showProBanner={showProBanner}
+        showProBanner={showProBanner}
+        setShowProBanner={setShowProBanner}
       />
 
       {aside && <AppShell.Aside p="md">{aside}</AppShell.Aside>}

@@ -1,6 +1,10 @@
 import { LoginForm } from "@/components/auth/LoginForm";
 import SharedHead from "@/components/shared/SharedHead";
 import app from "@/lib/app";
+import {
+  parseSubscriptionIntentFromUrl,
+  saveSubscriptionIntent,
+} from "@/lib/subscriptions/subscription-intent";
 import { Box, LoadingOverlay, Stack } from "@mantine/core";
 import { Provider } from "next-auth/providers/index";
 import { useSession } from "next-auth/react";
@@ -37,6 +41,23 @@ const SignInPage: FC = () => {
   useEffect(() => {
     if (status === "authenticated") {
       setAuthenticated(true);
+
+      // Check if there's subscription intent in the callback URL
+      if (callbackUrl) {
+        try {
+          const intent = parseSubscriptionIntentFromUrl(callbackUrl);
+          if (intent) {
+            // Save the subscription intent before redirecting
+            saveSubscriptionIntent(intent);
+          }
+        } catch (error) {
+          console.warn(
+            "Failed to parse subscription intent from callback URL:",
+            error
+          );
+        }
+      }
+
       router.push(callbackUrl);
     }
   }, [status, callbackUrl, router]);

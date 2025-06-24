@@ -118,7 +118,6 @@ enum DATA_REGION {
 enum SubscriptionPlan {
   FREE
   PRO
-  ENTERPRISE
 }
 
 enum SubscriptionStatus {
@@ -148,8 +147,6 @@ model Subscription {
   currentPeriodStart    DateTime? // Start of current billing period
   currentPeriodEnd      DateTime? // End of current billing period
   cancelAtPeriodEnd     Boolean            @default(false)
-  transcriptionsUsed    Int                @default(0)
-  transcriptionsLimit   Int                @default(120) // Monthly transcription minutes limit
   trialEndsAt           DateTime? // When the trial period ends (if applicable)
   priceId               String? // Current price ID from Stripe
   billingInterval       BillingInterval    @default(MONTHLY)
@@ -189,8 +186,9 @@ model SubscriptionInvoice {
 }
 
 enum UsageRecordType {
-  FILE_UPLOAD
+  API_REQUEST
   STORAGE_BYTES
+  DATA_PROCESSING
 }
 
 model UsageRecord {

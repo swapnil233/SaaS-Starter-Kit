@@ -48,7 +48,7 @@ export const useProfilePicture = (imageUrl: string | null) => {
   const invalidateProfilePictures = () => {
     queryClient.invalidateQueries({ queryKey: queryKeys.profilePicture(null) });
     // Instead of invalidating the entire user query, we'll refetch it
-    queryClient.refetchQueries({ queryKey: queryKeys.user() });
+    queryClient.refetchQueries({ queryKey: queryKeys.user.profile() });
   };
 
   return { profilePictureUrl, invalidateProfilePictures, isLoading };

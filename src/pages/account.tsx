@@ -1,3 +1,4 @@
+import BillingSection from "@/components/cards/account/BillingSection";
 import ChangePassword from "@/components/cards/account/ChangePassword";
 import DeleteAccountSection from "@/components/cards/account/DeleteAccountSection";
 import Integrations from "@/components/cards/account/Integrations";
@@ -122,6 +123,7 @@ const AccountPage: NextPageWithLayout<IAccountPageProps> = ({
       </Title>
 
       <PersonalInfo user={user} preferences={preferences} />
+      <BillingSection />
       <ChangePassword account={account} />
       <Integrations />
       <DeleteAccountSection

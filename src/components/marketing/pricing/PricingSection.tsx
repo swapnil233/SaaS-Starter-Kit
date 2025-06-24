@@ -1,20 +1,24 @@
-import { pricingPlans } from "@/lib/stripe/pricing";
+import { getAllPlansForMarketing } from "@/lib/subscriptions/plan-limits";
 import { Switch } from "@mantine/core";
+import { BillingInterval } from "@prisma/client";
 import { useState } from "react";
 import PricingCard from "./PricingCard";
 import PricingTitle from "./PricingTitle";
 
 const PricingSection: React.FC = () => {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
-    "monthly"
+  const [billingInterval, setBillingInterval] = useState<BillingInterval>(
+    BillingInterval.MONTHLY
   );
 
   const toggleBilling = () => {
-    setBillingCycle(billingCycle === "monthly" ? "yearly" : "monthly");
+    setBillingInterval(
+      billingInterval === BillingInterval.MONTHLY
+        ? BillingInterval.YEARLY
+        : BillingInterval.MONTHLY
+    );
   };
 
-  const currentPlans =
-    billingCycle === "monthly" ? pricingPlans.monthly : pricingPlans.yearly;
+  const allPlans = getAllPlansForMarketing();
 
   return (
     <section className="py-16 bg-gray-50">
@@ -25,16 +29,20 @@ const PricingSection: React.FC = () => {
           <Switch
             onChange={toggleBilling}
             size="lg"
-            checked={billingCycle === "yearly"}
+            checked={billingInterval === BillingInterval.YEARLY}
           />
-          <span className="ml-3 text-gray-700">Yearly</span>
+          <span className="ml-3 text-gray-700">
+            Yearly {billingInterval === BillingInterval.YEARLY && "(Save ~$40)"}
+          </span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 my-12">
-          {currentPlans.map((plan, index) => (
-            <PricingCard key={index} {...plan} billingCycle={billingCycle} />
-          ))}
-          {pricingPlans.oneTime.map((plan, index) => (
-            <PricingCard key={index} {...plan} billingCycle="oneTime" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12 max-w-4xl mx-auto">
+          {allPlans.map(({ plan, config }) => (
+            <PricingCard
+              key={plan}
+              plan={plan}
+              config={config}
+              billingInterval={billingInterval}
+            />
           ))}
         </div>
       </div>

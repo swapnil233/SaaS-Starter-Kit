@@ -1,5 +1,6 @@
+import ProBanner from "@/components/billing/pro-banner";
 import { AppShell, ScrollArea, Stack } from "@mantine/core";
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import CollapseButton from "./CollapseButton";
 import NavList from "./NavList";
 
@@ -7,14 +8,16 @@ interface SidebarProps {
   sidebarWasExpanded: boolean;
   handleCollapseClick: () => void;
   closeMobileSidebar: () => void;
-  _showProBanner?: boolean;
+  showProBanner: boolean | null;
+  setShowProBanner: Dispatch<SetStateAction<boolean | null>>;
 }
 
 const Sidebar: FC<SidebarProps> = ({
   sidebarWasExpanded,
   handleCollapseClick,
   closeMobileSidebar,
-  _showProBanner,
+  showProBanner,
+  setShowProBanner,
 }) => {
   return (
     <AppShell.Navbar
@@ -29,6 +32,13 @@ const Sidebar: FC<SidebarProps> = ({
           />
         </Stack>
       </AppShell.Section>
+
+      {/* Pro Banner Section - only show if expanded and banner should be shown */}
+      {sidebarWasExpanded && showProBanner && (
+        <AppShell.Section px="md" py="xs">
+          <ProBanner setShowProBanner={setShowProBanner} />
+        </AppShell.Section>
+      )}
 
       <AppShell.Section px="md" py={"xs"} visibleFrom="sm">
         <CollapseButton

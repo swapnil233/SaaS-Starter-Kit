@@ -1,16 +1,44 @@
-import { Dispatch, SetStateAction } from "react";
-
+import {
+  getSubscriptionIntent,
+  setProBannerDismissed,
+} from "@/lib/subscriptions/subscription-intent";
 import { ActionIcon, Button, Card, Group, Stack, Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import Link from "next/link";
+import { useRouter } from "next/router";
+import { Dispatch, SetStateAction } from "react";
+
+interface ProBannerProps {
+  setShowProBanner: Dispatch<SetStateAction<boolean | null>>;
+  onUpgradeClick?: () => void;
+}
 
 export default function ProBanner({
   setShowProBanner,
-}: {
-  setShowProBanner: Dispatch<SetStateAction<boolean | null>>;
-}) {
+  onUpgradeClick,
+}: ProBannerProps) {
+  const router = useRouter();
+
   const handleHideBanner = () => {
     setShowProBanner(false);
+    setProBannerDismissed(true);
+  };
+
+  const handleUpgradeClick = () => {
+    if (onUpgradeClick) {
+      onUpgradeClick();
+    } else {
+      // Default behavior: check for existing intent or create new one
+      const existingIntent = getSubscriptionIntent();
+      if (existingIntent) {
+        // Use existing intent - redirect to dashboard with modal
+        router.push(
+          `/dashboard?upgrade=true&plan=${existingIntent.plan}&interval=${existingIntent.billingInterval}`
+        );
+      } else {
+        // No existing intent - go to plans page
+        router.push("/dashboard/plans");
+      }
+    }
   };
 
   return (
@@ -32,8 +60,7 @@ export default function ProBanner({
           <Text size="sm">Unlock more features with our paid plans.</Text>
         </Stack>
         <Button
-          component={Link}
-          href="/dashboard/plans"
+          onClick={handleUpgradeClick}
           type="button"
           fullWidth
           size="sm"
