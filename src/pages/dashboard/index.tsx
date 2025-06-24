@@ -1,7 +1,7 @@
 import DashboardLayout from "@/components/shared/layouts/DashboardLayout";
 import SharedHead from "@/components/shared/SharedHead";
-import { useUser } from "@clerk/nextjs";
-import { Stack, Text, Title } from "@mantine/core";
+import { Protect, useUser } from "@clerk/nextjs";
+import { Badge, Group, Stack, Text, Title } from "@mantine/core";
 import { NextPageWithLayout } from "../page";
 
 const Dashboard: NextPageWithLayout = () => {
@@ -22,9 +22,20 @@ const Dashboard: NextPageWithLayout = () => {
     <>
       <SharedHead title="Dashboard" />
       <Stack>
-        <Title order={2}>
-          Hello, {user?.firstName || user?.fullName || "User"}!
-        </Title>
+        <Group>
+          <Title order={2}>
+            Hello, {user?.firstName || user?.fullName || "User"}!
+          </Title>
+          <Protect plan="pro">
+            <Badge
+              variant="gradient"
+              gradient={{ from: "pink", to: "yellow" }}
+              size="lg"
+            >
+              Pro Plan
+            </Badge>
+          </Protect>
+        </Group>
         <Text size="lg" c="dimmed">
           Welcome to your dashboard. You&apos;re successfully authenticated with
           Clerk.
