@@ -22,8 +22,8 @@ export function Hero() {
         <Text className="text-white opacity-75 max-w-[500px] mt-7 md:max-w-full">
           Ship faster with Boilerplate - a Next.js (pages router) SaaS starter
           kit built to speed up development of B2C SaaS products. Features
-          include a full authentication system, Stripe subscriptions, etc. Built
-          with Mantine UI components.{" "}
+          include complete authentication with Clerk, user management, and a
+          modern UI built with Mantine components.{" "}
         </Text>
 
         <Button

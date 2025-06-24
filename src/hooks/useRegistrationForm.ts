@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,6 +15,7 @@ const registrationSchema = z.object({
 type RegistrationFormData = z.infer<typeof registrationSchema>;
 
 export const useRegistrationForm = () => {
+  const router = useRouter();
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -53,7 +54,7 @@ export const useRegistrationForm = () => {
 
       return response.json();
     },
-    onSuccess: async (data, variables) => {
+    onSuccess: async (data, _variables) => {
       setIsSuccess(true);
       setIsError(false);
 
@@ -76,36 +77,8 @@ export const useRegistrationForm = () => {
         color: "green",
       });
 
-      try {
-        // Sign in automatically without passing the recaptchaToken
-        // And use redirect: false to handle errors manually
-        const result = await signIn("credentials", {
-          redirect: false,
-          callbackUrl: "/dashboard",
-          email: variables.email,
-          password: variables.password,
-          // Don't pass recaptchaToken here since it's already been used
-        });
-
-        if (result?.error) {
-          notifications.show({
-            title: "Login failed",
-            message:
-              "We couldn't log you in automatically. Please try signing in manually.",
-            color: "red",
-          });
-        } else if (result?.url) {
-          // Manually redirect on success
-          window.location.href = result.url;
-        }
-      } catch (error) {
-        notifications.show({
-          title: "Login failed",
-          message:
-            "An unexpected error occurred during sign in. Please try signing in manually.",
-          color: "red",
-        });
-      }
+      // Redirect to sign-in page since we're now using Clerk
+      router.push("/sign-in");
     },
     onError: (error: Error) => {
       setIsSuccess(false);

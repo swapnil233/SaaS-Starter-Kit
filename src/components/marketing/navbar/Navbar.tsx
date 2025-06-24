@@ -1,6 +1,13 @@
 import app from "@/lib/app";
 import { featuresList } from "@/lib/marketing/featuresList";
 import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+import {
   Anchor,
   Box,
   Burger,
@@ -124,13 +131,20 @@ export function Navbar() {
                         required.
                       </Text>
                     </div>
-                    <Button
-                      component={Link}
-                      href={"/register"}
-                      variant="default"
-                    >
-                      Get started
-                    </Button>
+                    <SignedOut>
+                      <SignUpButton mode="modal">
+                        <Button variant="default">Get started</Button>
+                      </SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                      <Button
+                        component={Link}
+                        href="/dashboard"
+                        variant="default"
+                      >
+                        Dashboard
+                      </Button>
+                    </SignedIn>
                   </Group>
                 </div>
               </HoverCard.Dropdown>
@@ -138,19 +152,30 @@ export function Navbar() {
             <Link href="#testimonials" className={classes.link}>
               Testimonials
             </Link>
-            <a href="#pricing" className={classes.link}>
-              Pricing
-            </a>
           </Group>
 
           <Group visibleFrom="sm">
             <ColorSchemeToggle />
-            <Button variant="default" component={Link} href="/signin">
-              Sign in
-            </Button>
-            <Button component={Link} href="/register">
-              Register
-            </Button>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button variant="default">Sign in</Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button>Sign up</Button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <Button component={Link} href="/dashboard" variant="default">
+                Dashboard
+              </Button>
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-10 h-10",
+                  },
+                }}
+              />
+            </SignedIn>
           </Group>
 
           <Burger
@@ -209,24 +234,31 @@ export function Navbar() {
             >
               Testimonials
             </Link>
-            <Link
-              href="#pricing"
-              className={classes.link}
-              onClick={closeDrawer}
-            >
-              Pricing
-            </Link>
           </Stack>
 
           <Divider my="sm" />
 
           <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default" component={Link} href="/signin">
-              Sign in
-            </Button>
-            <Button component={Link} href="/register">
-              Register
-            </Button>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button variant="default">Sign in</Button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <Button>Sign up</Button>
+              </SignUpButton>
+            </SignedOut>
+            <SignedIn>
+              <Button component={Link} href="/dashboard" variant="default">
+                Dashboard
+              </Button>
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-10 h-10",
+                  },
+                }}
+              />
+            </SignedIn>
           </Group>
         </ScrollArea>
       </Drawer>

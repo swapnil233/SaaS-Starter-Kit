@@ -1,7 +1,7 @@
 import {
   Icon,
-  IconBrandStripe,
   IconBug,
+  IconCreditCard,
   IconGauge,
   IconLock,
   IconMail,
@@ -28,13 +28,13 @@ export const featuresList: Feature[] = [
     icon: IconLock,
     title: "User authentication",
     description:
-      "OAuth as well as email/password authentication, including forgot-password.",
+      "Complete authentication system with Clerk. OAuth, email/password, and advanced security features built-in.",
   },
   {
-    icon: IconBrandStripe,
-    title: "Subscription management",
+    icon: IconCreditCard,
+    title: "Billing management",
     description:
-      "Easily manage subscriptions with Stripe integration. Set up one-time payments, recurring payments, handle billing, and offer flexible plans.",
+      "Ready for monetization with Clerk's built-in billing and subscription management. Easily integrate payment processing when you're ready to scale.",
   },
   {
     icon: IconUser,

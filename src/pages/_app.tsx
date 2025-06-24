@@ -3,13 +3,12 @@ import { RouterTransition } from "@/components/RouterTransition";
 import { useOnlineStatus } from "@/hooks/ui/useOnlineStatus";
 import QueryProvider from "@/lib/queries/QueryProvider";
 import "@/styles/globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 import { MantineProvider } from "@mantine/core";
 import { Notifications, notifications } from "@mantine/notifications";
 import "@mantine/notifications/styles.css";
 import "@mantine/nprogress/styles.css";
 import { IconX } from "@tabler/icons-react";
-import type { Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import { Be_Vietnam_Pro } from "next/font/google";
 import { useEffect } from "react";
@@ -25,10 +24,7 @@ const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro", // Optional: sets a custom variable name for the font
 });
 
-export default function App({
-  Component,
-  pageProps: { session, ...pageProps },
-}: AppPropsWithLayout & { session: Session }) {
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const isOnline = useOnlineStatus();
 
   useEffect(() => {
@@ -51,7 +47,7 @@ export default function App({
   const getLayout = Component.getLayout || ((page) => page);
 
   return (
-    <SessionProvider session={session}>
+    <ClerkProvider>
       <QueryProvider>
         <MantineProvider defaultColorScheme="auto">
           <RouterTransition />
@@ -63,6 +59,6 @@ export default function App({
           <Notifications position="top-right" />
         </MantineProvider>
       </QueryProvider>
-    </SessionProvider>
+    </ClerkProvider>
   );
 }

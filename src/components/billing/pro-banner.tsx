@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from "react";
 
 import { ActionIcon, Button, Card, Group, Stack, Text } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import Link from "next/link";
 
 export default function ProBanner({
   setShowProBanner,
@@ -11,6 +10,12 @@ export default function ProBanner({
 }) {
   const handleHideBanner = () => {
     setShowProBanner(false);
+  };
+
+  const handleUpgrade = () => {
+    // This will be replaced with Clerk's billing portal when you set it up
+    // For now, you can redirect to Clerk's billing or show a message
+    console.log("Redirect to Clerk billing portal");
   };
 
   return (
@@ -29,11 +34,12 @@ export default function ProBanner({
               <IconX style={{ width: "70%", height: "70%" }} stroke={1.5} />
             </ActionIcon>
           </Group>
-          <Text size="sm">Unlock more features with our paid plans.</Text>
+          <Text size="sm">
+            Unlock more features with Clerk&apos;s billing system.
+          </Text>
         </Stack>
         <Button
-          component={Link}
-          href="/dashboard/plans"
+          onClick={handleUpgrade}
           type="button"
           fullWidth
           size="sm"

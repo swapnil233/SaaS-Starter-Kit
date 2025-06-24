@@ -1,5 +1,5 @@
-import { getSession } from "@/lib/auth/session";
 import prisma from "@/lib/prisma";
+import { getAuth } from "@clerk/nextjs/server";
 import { PasswordResetToken, User, UserPreferences } from "@prisma/client";
 import { hashSync } from "bcrypt";
 import { randomBytes } from "crypto";
@@ -9,15 +9,22 @@ const RESET_TOKEN_EXPIRY_MS = 3600 * 1000; // One hour
 
 export const getCurrentUser = async (
   req: NextApiRequest,
-  res: NextApiResponse
+  _res: NextApiResponse
 ) => {
-  const session = await getSession(req, res);
+  const { userId } = getAuth(req);
 
-  if (!session) {
+  if (!userId) {
     throw new Error("Unauthorized");
   }
 
-  return session.user;
+  // Note: With Clerk, you'll need to sync Clerk user data with your database
+  // or use Clerk's user management directly
+  const user = await getUser({ id: userId });
+  if (!user) {
+    throw new Error("User not found in database");
+  }
+
+  return user;
 };
 
 export const getUser = async (

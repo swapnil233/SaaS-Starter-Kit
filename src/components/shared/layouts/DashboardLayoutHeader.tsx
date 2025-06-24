@@ -1,8 +1,7 @@
 import NotificationsButton from "@/components/shared/user/NotificationsButton";
-import UserNavMenu from "@/components/shared/user/UserNavMenu";
 import app from "@/lib/app";
+import { UserButton } from "@clerk/nextjs";
 import { AppShell, Burger, Group, Text } from "@mantine/core";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useState } from "react";
@@ -17,7 +16,6 @@ const DashboardLayoutHeader: FC<DashboardLayoutHeaderProps> = ({
   mobileSidebarWasExpanded,
   expandMobileSidebar,
 }) => {
-  const session = useSession();
   const [newNotifications] = useState(false);
 
   return (
@@ -50,10 +48,13 @@ const DashboardLayoutHeader: FC<DashboardLayoutHeaderProps> = ({
 
         <Group gap="xs" justify="flex-end" w="100%">
           <NotificationsButton newNotifications={newNotifications} />
-          <UserNavMenu
-            name={session.data?.user.name || "Loading..."}
-            email={session.data?.user.email || "Loading..."}
-            image={session.data?.user.image || ""}
+          <UserButton
+            appearance={{
+              elements: {
+                avatarBox: "w-10 h-10",
+              },
+            }}
+            showName={false}
           />
         </Group>
       </Group>

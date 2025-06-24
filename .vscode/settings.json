@@ -6,6 +6,7 @@
     "source.organizeImports": "explicit"
   },
   "cSpell.words": [
+    "clerk",
     "codenames",
     "colour",
     "commitlint",
@@ -16,7 +17,6 @@
     "Etyo",
     "Kasper",
     "leerob",
-    "nextauth",
     "nextjs",
     "npmrc",
     "pravatar",

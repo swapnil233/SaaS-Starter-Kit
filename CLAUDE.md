@@ -1,73 +1,77 @@
-# CLAUDE.md
+# Boilerplate SaaS Starter
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+A comprehensive Next.js SaaS starter template built with modern technologies and best practices.
 
-## Development Commands
+## Technology Stack
 
-- **Development server**: `npm run dev` (runs on http://localhost:3000)
-- **Build**: `npm run build`
-- **Linting**: `npm run lint`
-- **Testing**: `npm run test` or `npm run test:watch`
-- **Database migrations**: `npx prisma migrate dev` (development) or `npm run migrate:prod` (production)
-- **Database reset**: `npm run reset` (full reset including node_modules) or `npm run reset:prod` (production)
-- **Email development**: `npm run emails` (runs React Email dev server on port 3001)
-- **Stripe webhook testing**: `npm run stripe:watch`
-- **Code formatting**: `npm run prettier`
-
-## Architecture Overview
-
-This is a full-stack SaaS boilerplate built with:
-
-### Core Stack
-
-- **Framework**: Next.js 15 (Pages Router)
+- **Frontend**: Next.js (Pages Router), React 18, TypeScript
+- **UI Framework**: Mantine v7 components and utilities
+- **Authentication**: Clerk (OAuth, email/password, user management)
 - **Database**: PostgreSQL with Prisma ORM
-- **Authentication**: NextAuth.js with custom email/password and Google OAuth
-- **Payments**: Stripe integration with webhooks
-- **UI**: Mantine components + Tailwind CSS
-- **Email**: React Email with Resend
-- **Rate Limiting**: Upstash Redis
+- **Styling**: Tailwind CSS + Mantine components
+- **State Management**: TanStack Query (React Query)
+- **Email**: React Email + Resend/Nodemailer
+- **Deployment**: Vercel-optimized
+- **Testing**: Jest setup
+- **Code Quality**: ESLint, Prettier, Husky hooks
 
-### Key Architecture Patterns
+## Key Features
 
-**Authentication Flow**:
+### Authentication & User Management
 
-- Middleware (`src/middleware.ts`) handles route protection and rate limiting
-- JWT tokens for session management, email verification required
-- Custom auth endpoints in `src/pages/api/auth/`
+- Complete authentication system with Clerk
+- OAuth providers (Google, GitHub, etc.)
+- Email/password authentication
+- User profile management
+- Account settings and preferences
+- Ready for billing integration with Clerk&apos;s billing system
 
-**Database Schema**:
+### Developer Experience
 
-- User management with soft deletes and preferences
-- Subscription system with Stripe integration (plans: FREE, PRO)
-- Usage tracking and API key management
-- Notification system
+- TypeScript for type safety
+- ESLint + Prettier for code quality
+- Husky for pre-commit hooks
+- Hot reloading and fast development
+- Comprehensive error handling
+- SEO optimization built-in
 
-**Service Layer Pattern**:
+### Email System
 
-- Business logic separated into `src/services/` (auth, stripe, email, etc.)
-- Centralized error handling and validation
-- Webhook handlers for Stripe events
+- React Email components for beautiful emails
+- Transactional email support
+- Email templates for common use cases
 
-**Email System**:
+### Database & API
 
-- React Email templates in `src/lib/emails/`
-- Service-based email sending architecture
-- Subscription lifecycle notifications
+- PostgreSQL database with Docker setup
+- Prisma ORM with type-safe queries
+- API routes structure
+- Database migrations and seeding
+- Business logic separated into `src/services/`
 
-### Directory Structure
+### Production Ready
 
-- `src/components/` - Reusable UI components organized by feature
-- `src/pages/` - Next.js pages and API routes
-- `src/lib/` - Utilities, configurations, schema validation
-- `src/services/` - Business logic and external service integrations
-- `src/hooks/` - Custom React hooks
-- `prisma/` - Database schema and migrations
+- Vercel deployment configuration
+- Environment variable management
+- Error logging and monitoring setup
+- Performance optimization
+- Security best practices
 
-### Environment Setup
+## Getting Started
 
-Required environment variables include database URL, authentication secrets, Stripe keys, and email service configuration. Run PostgreSQL locally with `docker-compose up -d` and apply migrations with `npx prisma migrate dev`.
+Required environment variables include database URL, Clerk authentication keys, and email service configuration. Run PostgreSQL locally with `docker-compose up -d` and apply migrations with `npx prisma migrate dev`.
 
-### Testing & Code Quality
+## Project Structure
 
-The project uses Jest for testing, ESLint for linting, Prettier for formatting, and Husky with lint-staged for pre-commit hooks. All TypeScript files are strictly typed with proper error boundaries.
+```
+src/
+├── components/        # Reusable React components
+├── pages/            # Next.js pages (Pages Router)
+├── lib/              # Utility functions and configurations
+├── hooks/            # Custom React hooks
+├── services/         # Business logic and API calls
+├── styles/           # Global styles and CSS
+└── types/            # TypeScript type definitions
+```
+
+The application follows modern React patterns with hooks, context, and component composition for maintainable and scalable code.

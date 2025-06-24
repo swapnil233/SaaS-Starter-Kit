@@ -1,6 +1,5 @@
 import { usePersonalInfoForm } from "@/hooks/account";
 import { useProfilePicture } from "@/hooks/account/useProfilePicture";
-import { useUser } from "@/hooks/auth/useUser";
 import {
   Avatar,
   Button,
@@ -19,7 +18,6 @@ import { notifications } from "@mantine/notifications";
 import { User, UserPreferences } from "@prisma/client";
 import { IconUpload } from "@tabler/icons-react";
 import { useMutation } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 
 interface PersonalInfoProps {
   user: User;
@@ -30,8 +28,8 @@ const PersonalInfo = ({
   user: initialUser,
   preferences,
 }: PersonalInfoProps) => {
-  const { update: updateSession } = useSession();
-  const { data: user = initialUser } = useUser(initialUser);
+  // Use the passed user data directly for now since Clerk manages its own user state
+  const user = initialUser;
   const { profilePictureUrl, invalidateProfilePictures } = useProfilePicture(
     user.image
   );
@@ -139,7 +137,7 @@ const PersonalInfo = ({
         throw new Error("An unexpected error occurred");
       }
     },
-    onSuccess: async (key) => {
+    onSuccess: async (_key) => {
       notifications.show({
         title: "Success",
         message: "Profile picture updated successfully",
@@ -147,14 +145,15 @@ const PersonalInfo = ({
       });
 
       try {
-        await updateSession({ user: { image: key } });
+        // With Clerk, we don't need to manually update the session
+        // Clerk handles user state management automatically
         invalidateProfilePictures();
       } catch (error) {
-        console.error("Failed to update session:", error);
+        console.error("Failed to invalidate profile pictures:", error);
         notifications.show({
           title: "Warning",
           message:
-            "Profile picture updated but session refresh failed. Please refresh the page.",
+            "Profile picture updated but cache refresh failed. Please refresh the page.",
           color: "yellow",
         });
       }

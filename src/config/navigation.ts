@@ -5,7 +5,6 @@ import {
   IconFile,
   IconHome,
   IconInbox,
-  IconUser,
 } from "@tabler/icons-react";
 
 export const navigationConfig: NavigationConfig = {
@@ -37,11 +36,6 @@ export const navigationConfig: NavigationConfig = {
           href: "/automations",
           icon: IconBolt,
           label: "Automations",
-        },
-        {
-          href: "/account",
-          icon: IconUser,
-          label: "Account",
         },
       ],
     },
