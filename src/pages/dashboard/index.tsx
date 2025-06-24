@@ -37,8 +37,7 @@ const Dashboard: NextPageWithLayout = () => {
           </Protect>
         </Group>
         <Text size="lg" c="dimmed">
-          Welcome to your dashboard. You&apos;re successfully authenticated with
-          Clerk.
+          Welcome to your dashboard.
         </Text>
       </Stack>
     </>
