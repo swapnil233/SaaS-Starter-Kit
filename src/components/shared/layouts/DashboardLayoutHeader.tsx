@@ -27,23 +27,23 @@ const DashboardLayoutHeader: FC<DashboardLayoutHeaderProps> = ({
           hiddenFrom="sm"
           size="sm"
         />
-        <Group align="center" wrap="nowrap" gap="sm">
+        <Group align="center" wrap="nowrap" gap="md">
           {!mobileSidebarWasExpanded && app.logoUrl && (
-            <Link href="/">
-              <Group align="center" wrap="nowrap" gap="sm">
+            <Group align="center" wrap="nowrap" gap="sm">
+              <Link href="/">
                 <Image
                   src={app.logoUrl.light}
                   alt={app.logoUrlAlt}
-                  height={38}
-                  width={38}
+                  height={60}
+                  width={60}
                 />
-                <Text size="xl" fw={700} visibleFrom="sm">
-                  {app.name}
-                </Text>
-              </Group>
-            </Link>
+              </Link>
+              <Text size="xl" fw={700} visibleFrom="sm">
+                {app.name}
+              </Text>
+              <ColorSchemeToggle />
+            </Group>
           )}
-          <ColorSchemeToggle />
         </Group>
 
         <Group gap="xs" justify="flex-end" w="100%">
