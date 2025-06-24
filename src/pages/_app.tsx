@@ -47,7 +47,13 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout || ((page) => page);
 
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          fontSize: "16px",
+        },
+      }}
+    >
       <QueryProvider>
         <MantineProvider defaultColorScheme="auto">
           <RouterTransition />
