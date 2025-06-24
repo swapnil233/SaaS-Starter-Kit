@@ -48,6 +48,8 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <ClerkProvider
+      {...pageProps}
+      supportEmail="swapniliqbal@gmail.com"
       appearance={{
         variables: {
           fontSize: "16px",
